@@ -88,18 +88,13 @@ LEX:= flex
 
 .PHONEY: docs debug
 
-debug: libmpl.a
+debug: libppd.a
+
 
 ################################# PRODUCTIONS ##################################
 
 
-mpl: $(srcdir)/mpl.cpp libmpl.a $(yuck_h)
-	$(CXX) $(CXXFLAGS) -o $@ $(srcdir)/mpl.cpp $(yuck_o) -lmpl
-
-$(yuck_c) $(yuck_h): $(yuck_source)
-	yuck gen -H$(yuck_h) -o $(yuck_c) $<
-
-libmpl.a: $(ppd_objects) $(gen_objects) $(opt_objects)
+libppd.a: $(ppd_objects) $(gen_objects) $(opt_objects)
 	ar rcs $@ $(ppd_objects) $(gen_objects) $(opt_objects)
 
 docs: Doxyfile README.md $(allfiles)
