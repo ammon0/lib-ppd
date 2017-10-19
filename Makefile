@@ -107,9 +107,9 @@ $(CPP_OBJECTS): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WO
 $(WORKDIR):
 	mkdir -p $@
 
-install: $(headers) libmpl.a
+install: $(headers) libppd.a
 	install -d $(LIBDIR) $(INCDIR)/mpl
-	install -C libmpl.a $(LIBDIR)
+	install -C libppd.a $(LIBDIR)
 	for f in $(headers)  ; do install -C $$f $(INCDIR)/mpl; done
 
 

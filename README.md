@@ -1,10 +1,10 @@
-# MPL : Minimum Portable Language
+# Lib-PPD : Portable Program Data
 
 ## Project Goal
-This is a retargetable back-end for a machine language translator. The goal here is to create the portable program data format as an intermediate language. Then create one or more machine language generators to translate it for specific hardware. I'm specifically interested in x86 and arm as my back end targets.
+This is a machine-independent, retargetable compiler back-end. The goal here is to create the portable program data format as an intermediate language. Then create one or more machine language generators to translate it for specific hardware. I'm specifically interested in x86 and arm as my back end targets.
 
 ## Project Components
-*	PPD: Portable Program Data would be a machine independent format for programs. It is currently made up of an index of symbols. Symbols are textual names that may refer to labels or definitions. Labels represent registers, or memory locations. Definitions are used to determine how much memory to reserve at each label, and also store program instructions that will be translated at that location during code generation. Instructions are stored in the "quad" format. This should facilitate optimization in the future.
+*	PPD: Portable Program Data is a machine independent format for programs. It is currently made up of an index of symbols. Symbols are textual names that may refer to labels or definitions. Labels represent registers, or memory locations. Definitions are used to determine how much memory to reserve at each label, and also store program instructions that will be translated at that location during code generation. Instructions are stored in the "quad" format. This should facilitate optimization in the future.
 *	MPL: Minimum Portable Language would be a text format that closely resembles the PPD's internal format. It should be fairly easy to "dump" a PPD object into an MPL file and then parse it back into PPD.
 *	PEXE: Portable Executable would be a binary serialization of PPD allowing partially compiled machine independent programs to be shared and distributed. A PEXE file forms PPD when it is read into memory. It should then be easy to either execute the PPD directly in a virtual machine, or complete its compilation to native machine code. PEXE files should have a built-in file signing method to ensure validity.
 *	MID: A Module Interface Description would be a binary file that should be produced when any PPD that doesn't contain a `start` routine is compiled to native code. the MID file contains the necessary information to link against the compiled library.
