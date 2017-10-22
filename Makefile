@@ -108,9 +108,9 @@ $(WORKDIR):
 	mkdir -p $@
 
 install: $(headers) libppd.a
-	install -d $(LIBDIR) $(INCDIR)/mpl
+	install -d $(LIBDIR) $(INCDIR)/ppd
 	install -C libppd.a $(LIBDIR)
-	for f in $(headers)  ; do install -C $$f $(INCDIR)/mpl; done
+	for f in $(headers)  ; do install -C $$f $(INCDIR)/ppd; done
 
 
 ################################## UTILITIES ###################################
