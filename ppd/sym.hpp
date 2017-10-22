@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *	MPL : Minimum Portable Language
+ *	lib-ppd : Portable Program Data Library
  *
  *	Copyright (c) 2017 Ammon Dodson
  *	You should have received a copy of the license terms with this software. If
@@ -160,12 +160,12 @@ public:
 	
 	/******************************* ACCESSOR *********************************/
 	
-	umax    get_value(void)const{ return value; }
-	width_t get_width(void)const{ return width; }
-	bool    is_signed(void)const{ return signd; }
+	umax    get_value(void)const{ return value   ; }
+	width_t get_width(void)const{ return width   ; }
+	bool    is_signed(void)const{ return signd   ; }
+	sym_t   get_type (void)const{ return st_prime; }
 	
-	sym_t        get_type(void)const{ return st_prime; }
-	const char * print(void) const{}
+	const char * print(void) const;
 	
 	/******************************* MUTATORS *********************************/
 	

@@ -37,8 +37,9 @@ typedef enum x86_mode_t{
  *	@param proccessor_mode The x86 proccessor mode the code will be generated for.
  */
 void x86 (FILE * out_fd, PPD * prog, x86_mode_t proccessor_mode);
-
-//void arm(FILE * out_fd, PPD prog, mode_t mode);
+//void arm (FILE * out_fd, PPD * prog, mode_t mode               );
+//void mpl (FILE * out_fd, PPD * prog                            );
+//void pexe(FILE * out_fd, PPD * prog                            );
 
 
 #endif // _GEN_HPP

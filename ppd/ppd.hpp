@@ -29,9 +29,6 @@ struct PPD{
 	bool dead     =false; ///< indicates whether this PPD has passed opt_dead
 	bool constants=false; ///< indicates whether this PPD has passed opt_const
 	Sym_index symbols;
-	
-public:
-	return_t Make_MPL(FILE * outfile) const;
 };
 
 

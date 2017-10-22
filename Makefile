@@ -1,6 +1,6 @@
 ################################################################################
 #
-#	PPD : PORTABLE PROGRAM DATA
+#	lib-ppd : PORTABLE PROGRAM DATA LIBRARY
 #
 #	Copyright (c) 2017 Ammon Dodson
 #	You should have received a copy of the licence terms with this software. If
@@ -29,7 +29,7 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp)
 allfiles:= $(headers) $(cpp_sources) $(prv_headers)
 
 # Object files
-ppd_objects :=instructions.o container.o routine.o
+ppd_objects :=instructions.o container.o routine.o sym.o
 gen_objects :=gen-arm.o x86_declarations.o x86_reg.o gen-x86.o
 pexe_objects:=gen-pexe.o read-pexe.o
 opt_objects :=opt-dead.o
