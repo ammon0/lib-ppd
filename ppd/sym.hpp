@@ -107,7 +107,7 @@ the code generator doesn't actually need to know anything about the structure of
 
 
 class Definition: public Symbol{
-	size_t size=0;
+	size_t size=0; // this size is dependent on the compilation target.
 	
 public:
 	/****************************** CONSTRUCTOR *******************************/

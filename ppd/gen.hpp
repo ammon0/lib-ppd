@@ -20,7 +20,7 @@
 
 
 #include <ppd/ppd.hpp>
-#include <stdio.h>
+#include <util/types.h>
 
 
 /// x86 processor modes
@@ -38,7 +38,7 @@ typedef enum x86_mode_t{
  */
 void x86 (FILE * out_fd, PPD * prog, x86_mode_t proccessor_mode);
 //void arm (FILE * out_fd, PPD * prog, mode_t mode               );
-//void mpl (FILE * out_fd, PPD * prog                            );
+void mpl (FILE * out_fd, PPD * prog                            );
 //void pexe(FILE * out_fd, PPD * prog                            );
 
 

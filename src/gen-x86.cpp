@@ -720,15 +720,15 @@ static void Gen_routine(lbl_pt lbl, Routine * routine){
 void x86 (FILE * out_fd, PPD * prog, x86_mode_t proccessor_mode){
 	lbl_pt lbl;
 	
-	msg_print(NULL, V_INFO, "x86(): start");
+	msg_print(NULL, V_INFO, "x86(): start\n");
 	
 	if(proccessor_mode != xm_long && proccessor_mode != xm_protected){
-		msg_print(NULL, V_ERROR, "x86: Invalid processor mode");
+		msg_print(NULL, V_ERROR, "x86: Invalid processor mode\n");
 		throw;
 	}
 	
 	if(!out_fd){
-		msg_print(NULL, V_ERROR, "x86(): out_fd is NULL");
+		msg_print(NULL, V_ERROR, "x86(): out_fd is NULL\n");
 		throw;
 	}
 	
