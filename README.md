@@ -1,15 +1,18 @@
 # Lib-PPD : Portable Program Data
 
-## Project Goal
-This is a machine-independent, retargetable compiler back-end. The goal here is to create the portable program data format as an intermediate language. Then create one or more machine language generators to translate it for specific hardware. I'm specifically interested in x86 and arm as my back end targets.
-
 ## Project Components
-*	PPD: Portable Program Data is a machine independent format for programs. It is currently made up of an index of symbols. Symbols are textual names that may refer to labels or definitions. Labels represent registers, or memory locations. Definitions are used to determine how much memory to reserve at each label, and also store program instructions that will be translated at that location during code generation. Instructions are stored in the "quad" format. This should facilitate optimization in the future.
-*	MPL: Minimum Portable Language would be a text format that closely resembles the PPD's internal format. It should be fairly easy to "dump" a PPD object into an MPL file and then parse it back into PPD.
-*	PEXE: Portable Executable would be a binary serialization of PPD allowing partially compiled machine independent programs to be shared and distributed. A PEXE file forms PPD when it is read into memory. It should then be easy to either execute the PPD directly in a virtual machine, or complete its compilation to native machine code. PEXE files should have a built-in file signing method to ensure validity.
-*	MID: A Module Interface Description would be a binary file that should be produced when any PPD that doesn't contain a `start` routine is compiled to native code. the MID file contains the necessary information to link against the compiled library.
-*	gen-XXX: code generators that convert PPD into various serialized formats. I am currently developing gen-x86 that will convert PPD into NASM assembly code. there are place holders for gen-arm, and gen-pexe.
-*	opt-XXX: PPD optimizers read through the quad instructions and apply transformations that should improve size and speed. opt-dead is intended to remove dead code and temp variables although it will have to be reworked since there has been extensive modifications to PPD.
+*	ppd: internal representation
+*	mpl: textual representation
+*	pexe: serialized representation
+
+## Important Classes
+*	`PPDModule`: A compilation unit, standalone or otherwise, Contains static memory information and a list of routines
+*	`PPDRoutine`: 
+*	`PPDBlock`: Contains a list of PPDInst's with a single entrance label, and a single exit
+*	`PPDInst`: A data structure containing a PPDInstCode and 2 or 3 arguments
+*	`PPDArg`: Arguments are referenced by pointers and may include labels, and definitions.
+*	`PPDDefs`: a container for definitions
+*	`PPDDefinition`: contains information for determining the size of a memory location or operand. Definitions are unnamed at this level and are accessed by reference.
 
 ## Project Pages
 *	[Latest Release](https://github.com/ammon0/MPL/releases/latest)
@@ -17,7 +20,7 @@ This is a machine-independent, retargetable compiler back-end. The goal here is 
 *	[github](https://github.com/ammon0/MPL)
 
 ## MIT License
-Copyright (c) 2016-2017 Ammon Dodson
+Copyright (c) 2016-2018 Ammon Dodson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

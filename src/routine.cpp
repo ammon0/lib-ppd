@@ -10,27 +10,27 @@
  ******************************************************************************/
 
 
-#include <ppd/sym.hpp>
+#include <ppd/routine.hpp>
 
 #include <util/data.h>
 #include <util/msg.h>
 
 
-Routine::Routine(const char * full_name): Definition(full_name){
+PPD_Routine::PPD_Routine(const char * full_name): PPD_Definition(full_name){
 	std::string temp;
 	
 	blocks = DS_new_list(sizeof(Block));
 	
 	temp = full_name;
 	temp += "_params";
-	formal_params.set_label(temp.c_str());
+	formal_params.set_name(temp.c_str());
 	
 	temp = full_name;
 	temp += "_autos";
-	auto_storage.set_label(temp.c_str());
+	auto_storage.set_name(temp.c_str());
 	
 }
-Routine::~Routine(void){
+PPD_Routine::~PPD_Routine(void){
 	blk_pt blk;
 	
 	while((blk = first())) delete blk;
@@ -39,14 +39,14 @@ Routine::~Routine(void){
 
 /******************************* ACCESSOR *********************************/
 
-bool   Routine::isempty(void)const{ return         DS_isempty(blocks); }
-blk_pt Routine::first  (void)const{ return (blk_pt)DS_first  (blocks); }
-blk_pt Routine::next   (void)const{ return (blk_pt)DS_next   (blocks); }
+bool   PPD_Routine::isempty(void)const{ return         DS_isempty(blocks); }
+blk_pt PPD_Routine::first  (void)const{ return (blk_pt)DS_first  (blocks); }
+blk_pt PPD_Routine::next   (void)const{ return (blk_pt)DS_next   (blocks); }
 
-const char * Routine::print(void) const{
+const char * PPD_Routine::print(void) const{
 	std::string str;
 	
-	str = "Routine: ";
+	str = "PPD_Routine: ";
 	str += get_name();
 	
 	str += "\n\tParameters:";
@@ -60,7 +60,7 @@ const char * Routine::print(void) const{
 
 /******************************* MUTATORS *********************************/
 
-inst_pt Routine::add_inst (inst_pt instruction){
+inst_pt PPD_Routine::add_inst (inst_pt instruction){
 	blk_pt  last_blk;
 	inst_pt inst;
 	

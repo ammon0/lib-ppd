@@ -29,9 +29,9 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp)
 allfiles:= $(headers) $(cpp_sources) $(prv_headers)
 
 # Object files
-ppd_objects :=instructions.o container.o routine.o sym.o
-gen_objects :=gen-arm.o x86_declarations.o x86_reg.o gen-x86.o gen-mpl.o
+ppd_objects :=block.o container.o routine.o sym.o
 pexe_objects:=gen-pexe.o read-pexe.o
+mpl_objects:=gen-mpl.o read-mpl.o
 opt_objects :=opt-dead.o
 
 # Prefix the object files
@@ -94,8 +94,8 @@ debug: libppd.a
 ################################# PRODUCTIONS ##################################
 
 
-libppd.a: $(ppd_objects) $(gen_objects) $(opt_objects)
-	ar rcs $@ $(ppd_objects) $(gen_objects) $(opt_objects)
+libppd.a: $(ppd_objects)
+	ar rcs $@ $(ppd_objects)
 
 docs: Doxyfile README.md $(allfiles)
 	doxygen Doxyfile

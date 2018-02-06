@@ -1,28 +1,26 @@
 /*******************************************************************************
  *
- *	MPL : Minimum Portable Language
+ *	lib-ppd : Portable Program Data Library
  *
- *	Copyright (c) 2017 Ammon Dodson
+ *	Copyright (c) 2018 Ammon Dodson
  *	You should have received a copy of the license terms with this software. If
  *	not, please visit the project homepage at:
  *	https://github.com/ammon0/MPL
  *
  ******************************************************************************/
 
-/**	@file instructions.hpp
- *	
- *	Definitions for portable instructions
- */
+
+#ifndef ROUTINE_HPP
+#define ROUTINE_HPP
+
+#include "sym.hpp"
 
 
-#ifndef _INSTRUCTIONS_HPP
-#define _INSTRUCTIONS_HPP
 
+/******************************************************************************/
+//                              INSTRUCTIONS
+/******************************************************************************/
 
-typedef class  Label * lbl_pt;
-typedef struct _root * DS;
-
-#include <util/types.h>
 
 /*
 
@@ -163,8 +161,11 @@ typedef struct{
 typedef Instruction * inst_pt;
 
 
-/**	A basic block
-*/
+/******************************************************************************/
+//                            BASIC BLOCK CLASS
+/******************************************************************************/
+
+
 class Block{
 	DS q;
 public:
@@ -196,6 +197,40 @@ public:
 typedef Block * blk_pt;
 
 
-#endif // _INSTRUCTIONS_HPP
+/******************************************************************************/
+//                              ROUTINE CLASS
+/******************************************************************************/
+
+
+class PPD_Routine: public PPD_Definition{
+	DS blocks;
+	
+public:
+	PPD_Structure formal_params;
+	PPD_Structure auto_storage;
+	uint      concurrent_temps=0;
+	
+	/****************************** CONSTRUCTOR *******************************/
+	
+	PPD_Routine(const char * full_name);
+	~PPD_Routine(void);
+	
+	/******************************* ACCESSOR *********************************/
+	
+	bool isempty(void) const;
+	
+	blk_pt first(void) const;
+	blk_pt next (void) const;
+	
+	sym_t        get_type(void)const{ return st_routine; }
+	const char * print(void) const;
+	
+	/******************************* MUTATORS *********************************/
+	
+	inst_pt add_inst (inst_pt instruction);
+};
+
+
+#endif // ROUTINE_HPP
 
 

@@ -9,7 +9,7 @@
  *
  ******************************************************************************/
 
-#include <ppd/sym.hpp>
+#include <ppd/ppd.hpp>
 #include <util/data.h>
 #include <util/msg.h>
 

@@ -2,7 +2,7 @@
  *
  *	lib-ppd : Portable Program Data Library
  *
- *	Copyright (c) 2017 Ammon Dodson
+ *	Copyright (c) 2018 Ammon Dodson
  *	You should have received a copy of the license terms with this software. If
  *	not, please visit the project homepage at:
  *	https://github.com/ammon0/MPL
@@ -14,20 +14,19 @@
 #define _SYM_HPP
 
 
-#include <ppd/instructions.hpp>
 #include <util/types.h>
 #include <string>
 
 
 typedef struct _root * DS;
-typedef class Symbol       * sym_pt;
-typedef class Definition   * def_pt;
-typedef class Label        * lbl_pt;
+typedef class PPD_Symbol       * sym_pt;
+typedef class PPD_Definition   * def_pt;
+typedef class PPD_Label        * lbl_pt;
 
 
 typedef enum{
 	st_label,
-	st_prime,
+	st_int,
 	st_array,
 	st_struct,
 	st_routine
@@ -41,13 +40,13 @@ typedef enum{
 /******************************************************************************/
 
 
-class Symbol{
+class PPD_Symbol{
 	std::string name;
 	
 public:
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Symbol(const char * full_name){ name = full_name; }
+	PPD_Symbol(const char * n){ name = n; }
 	
 	/******************************* ACCESSOR *********************************/
 	
@@ -58,42 +57,9 @@ public:
 	
 	/******************************* MUTATORS *********************************/
 	
-	void set_label(const char * full_name){ name = full_name; }
+	void set_name(const char * full_name){ name = full_name; }
 	
 };
-
-
-/******************************************************************************/
-//                            THE SYMBOL INDEX
-/******************************************************************************/
-
-
-class Sym_index{
-	DS index;
-	
-public:
-	/****************************** CONSTRUCTOR *******************************/
-	
-	Sym_index(void);
-	~Sym_index(void);
-	
-	/******************************* ACCESSOR *********************************/
-	
-	bool  isempty(void);
-	
-	sym_pt find (const char * name) const; ///< find an object by name
-	sym_pt first(      void       ) const; ///< Returns the first object
-	sym_pt next (      void       ) const; ///< Returns the next object
-	
-	/******************************* MUTATORS *********************************/
-	
-	sym_pt remove(const char   * name  ); ///< Remove an object by its name
-	sym_pt add   (      sym_pt   object); ///< add a new object
-	
-};
-
-
-
 
 
 /******************************************************************************/
@@ -106,13 +72,13 @@ the code generator doesn't actually need to know anything about the structure of
 */
 
 
-class Definition: public Symbol{
+class PPD_Definition: public PPD_Symbol{
 	size_t size=0; // this size is dependent on the compilation target.
 	
 public:
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Definition(const char * full_name): Symbol(full_name){}
+	PPD_Definition(const char * full_name): PPD_Symbol(full_name){}
 	
 	/******************************* ACCESSOR *********************************/
 	
@@ -145,29 +111,35 @@ typedef enum width_t{
 	w_NUM
 } width_t;
 
+typedef enum signedness_t{
+	s_undef,
+	s_signed,
+	s_unsigned,
+	s_NUM
+} signedness_t;
+
 /* The way signedness is represented is machine dependent so the machine instructions for signed and unsigned arithmetic may be different.
 */
 
-class Primative: public Definition{
-	width_t width;
-	bool    signd;
-	umax    value;
+struct PPD_Integer: public PPD_Definition{
+	width_t      width = w_none ;
+	signedness_t signd = s_undef;
+	umax         value          ;
 	
 public:
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Primative();
-	
 	/******************************* ACCESSOR *********************************/
 	
-	umax    get_value(void)const{ return value   ; }
-	width_t get_width(void)const{ return width   ; }
-	bool    is_signed(void)const{ return signd   ; }
-	sym_t   get_type (void)const{ return st_prime; }
+	umax         get_value(void)const{ return value ; }
+	width_t      get_width(void)const{ return width ; }
+	signedness_t is_signed(void)const{ return signd ; }
+	sym_t        get_type (void)const{ return st_int; }
 	
 	const char * print(void) const;
 	
 	/******************************* MUTATORS *********************************/
+	
 	
 	
 };
@@ -195,7 +167,7 @@ typedef enum{
 } access_mode;
 
 
-class Label: public Symbol{
+class PPD_Label: public PPD_Symbol{
 	access_mode mode=am_none;
 	def_pt      def=NULL;
 	
@@ -218,7 +190,7 @@ protected:
 public:
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Label(const char * full_name): Symbol(full_name){}
+	PPD_Label(const char * full_name): PPD_Symbol(full_name){}
 	
 	/******************************* ACCESSOR *********************************/
 	
@@ -228,7 +200,7 @@ public:
 	size_t      get_size(void)const{ return def->get_size(); }
 	umax        get_value(void)const{
 		if(mode != am_constant) throw;
-		return static_cast<Primative*>(def)->get_value();
+		return static_cast<PPD_Integer*>(def)->get_value();
 	}
 	const char * print(void) const{}
 	
@@ -240,7 +212,7 @@ public:
 };
 
 
-class Array: public Definition{
+class PPD_Array: public PPD_Definition{
 	def_pt child;
 	umax   count;
 	
@@ -249,7 +221,7 @@ public:
 	
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Array();
+	PPD_Array();
 	
 	/******************************* ACCESSOR *********************************/
 	
@@ -264,7 +236,7 @@ public:
 
 
 
-class Structure: public Definition{
+class PPD_Structure: public PPD_Definition{
 	DS fields;
 	
 public:
@@ -272,8 +244,8 @@ public:
 	
 	/****************************** CONSTRUCTOR *******************************/
 	
-	Structure(void);
-	~Structure(void);
+	PPD_Structure(void);
+	~PPD_Structure(void);
 	
 	
 	/******************************* ACCESSOR *********************************/
@@ -315,38 +287,7 @@ public:
 };
 
 
-/******************************************************************************/
-//                              ROUTINE CLASS
-/******************************************************************************/
 
-
-class Routine: public Definition{
-	DS blocks;
-	
-public:
-	Structure formal_params;
-	Structure auto_storage;
-	uint      concurrent_temps=0;
-	
-	/****************************** CONSTRUCTOR *******************************/
-	
-	Routine(const char * full_name);
-	~Routine(void);
-	
-	/******************************* ACCESSOR *********************************/
-	
-	bool isempty(void) const;
-	
-	blk_pt first(void) const;
-	blk_pt next (void) const;
-	
-	sym_t        get_type(void)const{ return st_routine; }
-	const char * print(void) const;
-	
-	/******************************* MUTATORS *********************************/
-	
-	inst_pt add_inst (inst_pt instruction);
-};
 
 
 #endif // _SYM_HPP

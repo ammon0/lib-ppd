@@ -13,7 +13,7 @@
 
 #include <ppd/sym.hpp>
 
-const char * Primative::print(void)const{
+const char * PPD_Integer::print(void)const{
 	static char string[30] = "bytes 0 +00000000000000000000";
 	
 	switch(width){
