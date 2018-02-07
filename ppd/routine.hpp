@@ -150,11 +150,11 @@ typedef enum {
 /**	These are the PPD representation of instruction triples. The destination parameter must always be an l-value.
  */
 typedef struct{
-	lbl_pt    dest;
-	lbl_pt    left;
-	lbl_pt    right;
-	inst_code op;
-	bool      used_next=false;
+	lbl_pt    dest;  ///< the instruction's result
+	lbl_pt    left;  ///< the instruction's left operand
+	lbl_pt    right; ///< the instruction's right operand
+	inst_code op   ; ///< the instruction to be executed
+	bool      used_next=false; ///< used by the optimizer
 } Instruction;
 
 /// a pointer to Instruction

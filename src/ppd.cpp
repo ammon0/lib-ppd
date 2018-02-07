@@ -15,53 +15,62 @@
 
 #include <string.h>
 
-static inline const void * sym_name(const void * obj){
-	return (*(sym_pt*)obj)->get_name();
+static inline const void * lbl_name(const void * obj){
+	return (*(lbl_pt*)obj)->get_name();
 }
 static inline imax lbl_cmp(const void * left, const void * right){
 	return strcmp((char*) left, (char*) right);
 }
 
 
-Sym_index::Sym_index(void){
-	index = DS_new_bst(
-		sizeof(sym_pt),
+/****************************** CONSTRUCTOR *******************************/
+
+PPD_Module::PPD_Module(void){
+	
+	lbl_dex = DS_new_bst(
+		sizeof(lbl_pt),
 		false,
-		&sym_name,
+		&lbl_name,
 		&lbl_cmp
 	);
+	
+	defs = DS_new_list(sizeof(def_pt));
 }
-Sym_index::~Sym_index(void){ DS_delete(index); }
+
+PPD_Module::~PPD_Module(void){
+	DS_delete(lbl_dex);
+	DS_delete(defs);
+}
 
 /******************************* ACCESSOR *********************************/
 
-sym_pt Sym_index::find(const char * name) const{
-	return *(sym_pt*)DS_find(index, name);
+lbl_pt PPD_Module::find(const char * name) const{
+	return *(lbl_pt*)DS_find(lbl_dex, name);
 }
-sym_pt Sym_index::first(void)const{
-	return *(sym_pt*)DS_first(index);
+lbl_pt PPD_Module::first(void)const{
+	return *(lbl_pt*)DS_first(lbl_dex);
 }
-sym_pt Sym_index::next (void)const{
-	return *(sym_pt*)DS_next(index);
+lbl_pt PPD_Module::next (void)const{
+	return *(lbl_pt*)DS_next(lbl_dex);
 }
 
 /******************************* MUTATORS *********************************/
 
-sym_pt Sym_index::remove(const char * name){
-	if(DS_find(index, name)) return *(sym_pt*)DS_remove(index);
+lbl_pt PPD_Module::remove(const char * name){
+	if(DS_find(lbl_dex, name)) return *(lbl_pt*)DS_remove(lbl_dex);
 	else{
 		msg_print(NULL, V_ERROR, "Internal PPD::remove(): no such object");
 		throw;
 	}
 }
 
-sym_pt Sym_index::add(sym_pt object){
+lbl_pt PPD_Module::add(lbl_pt object){
 //	if(!object->named()){
 //		msg_print(NULL, V_ERROR, "Internal PPD::add(): object has no name");
 //		throw;
 //	}
 	
-	return *(sym_pt*)DS_insert(index, object);
+	return *(lbl_pt*)DS_insert(lbl_dex, object);
 }
 
 

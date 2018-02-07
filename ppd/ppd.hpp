@@ -45,7 +45,7 @@ public:
 	/******************************* MUTATORS *********************************/
 	
 	lbl_pt remove(const char   * name  ); ///< Remove an label by its name
-	lbl_pt add   (      sym_pt   object); ///< add a new label
+	lbl_pt add   (      lbl_pt   object); ///< add a new label
 	
 	def_pt AddDef(def_pt definition); ///< add a new definition
 };

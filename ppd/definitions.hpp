@@ -36,10 +36,12 @@ public:
 	
 	/******************************* ACCESSOR *********************************/
 	
+	/// returns the size in bytes of this defintion (if known)
 	size_t get_size(void)const{ return size; }
 	
 	/******************************* MUTATORS *********************************/
 	
+	/// sets the size in bytes of this definition
 	void set_size(size_t bytes){ size = bytes; }
 };
 
@@ -48,7 +50,7 @@ typedef PPD_Definition * def_pt;
 
 
 /******************************************************************************/
-//                             DATA TYPES
+//                              INTEGER TYPE
 /******************************************************************************/
 
 
@@ -65,6 +67,7 @@ typedef enum width_t{
 	w_NUM
 } width_t;
 
+/// indicates if the integer is signed
 typedef enum signedness_t{
 	s_undef,
 	s_signed,
@@ -72,11 +75,9 @@ typedef enum signedness_t{
 	s_NUM
 } signedness_t;
 
-/* The way signedness is represented is machine dependent so the machine instructions for signed and unsigned arithmetic may be different.
-*/
-
-
 /**	A PPD representation of an integer variable
+ *	The way signedness is represented is machine dependent so the machine
+ *	instructions for signed and unsigned arithmetic may be different.
 */
 struct PPD_Integer: public PPD_Definition{
 	width_t      width = w_none ;
@@ -89,41 +90,54 @@ public:
 	/******************************* ACCESSOR *********************************/
 	
 	umax         get_value(void)const{ return value ; }
+	/// get the integer width
 	width_t      get_width(void)const{ return width ; }
+	/// get the signedness of the integer
 	signedness_t is_signed(void)const{ return signd ; }
-	//sym_t        get_type (void)const{ return st_int; }
-	
-	const char * print(void) const;
 	
 	/******************************* MUTATORS *********************************/
 	
-	
-	
+	/// set the integer with a signed value
+	void set_sval (imax i   ){ value = i; signd = s_signed  ; }
+	/// set the integer with an unsigned value
+	void set_uval (umax i   ){ value = i; signd = s_unsigned; }
+	/// set the integer's width
+	void set_width(width_t w){ width = w; }
 };
+
+
+/******************************************************************************/
+//                                 ARRAY TYPE
+/******************************************************************************/
 
 
 /** A PPD representation of an array
 */
 class PPD_Array: public PPD_Definition{
-	def_pt child;
-	umax   count;
+	def_pt chld;
+	umax   cnt;
 	
 public:
 	
 	/****************************** CONSTRUCTOR *******************************/
 	
-	PPD_Array();
 	
 	/******************************* ACCESSOR *********************************/
 	
-	def_pt       get_child(void)const{ return child   ; }
-	//sym_t        get_type (void)const{ return st_array; }
+	/// returns a def_pt for the contents of each array cell
+	def_pt get_child(void)const{ return chld   ; }
 	const char * print(void) const{}
 	
 	/******************************* MUTATORS *********************************/
 	
-	
+	void set_child(def_pt child){ chld = child; }
+	void set_count(umax count){ cnt = count; }
 };
+
+
+/******************************************************************************/
+//                            STRUCTURE TYPE
+/******************************************************************************/
 
 
 /**	A PPD representation of a structure
@@ -139,39 +153,14 @@ public:
 	PPD_Structure(void);
 	~PPD_Structure(void);
 	
-	
 	/******************************* ACCESSOR *********************************/
 	
-	bool isempty(void);
-	umax count  (void);
+	bool isempty(void) const;
+	umax count  (void) const;
 	
-	lbl_pt find   (const char * name) const;
-	lbl_pt first  (void             ) const;
-	lbl_pt next   (void             ) const;
-	
-	const char * print(void) const;
-	
-	//sym_t        get_type(void)const{ return st_struct; }
-//	const char * print(void) const{
-//		std::string str;
-//		lbl_pt field;
-//		
-//		str = "Struct: ";
-//		str += get_name();
-//		str += "\n";
-//		
-//		if(( field = first() )){
-//			do{
-//				str += "\t";
-//				str += field->print();
-//				str += "\n";
-//			}while(( field = next() ));
-//		}
-//		
-//		str += "\n";
-//		
-//		return str.c_str();
-//	}
+	lbl_pt find (const char * name) const; ///< Find a label by name
+	lbl_pt first(void             ) const; ///< get the first label
+	lbl_pt next (void             ) const; ///< get the next label
 	
 	/******************************* MUTATORS *********************************/
 	

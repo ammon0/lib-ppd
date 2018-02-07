@@ -29,7 +29,7 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp)
 allfiles:= $(headers) $(cpp_sources) $(prv_headers)
 
 # Object files
-ppd_objects :=block.o routine.o
+ppd_objects :=routine.o ppd.o definitions.o
 pexe_objects:=gen-pexe.o read-pexe.o
 mpl_objects:=gen-mpl.o read-mpl.o
 opt_objects :=opt-dead.o

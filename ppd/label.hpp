@@ -77,6 +77,7 @@ public:
 	
 	/******************************* ACCESSOR *********************************/
 	
+	const char * get_name(void)const{ return name.c_str(); }
 	access_mode get_mode(void)const{ return mode  ; }
 	def_pt      get_def (void)const{ return def   ; }
 	size_t      get_size(void)const{ return def->get_size(); }
@@ -88,8 +89,8 @@ public:
 	
 	/******************************* MUTATORS *********************************/
 	
-	void set_def(def_pt);
-	void set_mode(access_mode);
+	void set_def(def_pt definition) { def = definition; }
+	void set_mode(access_mode m) { mode = m; }
 	
 };
 

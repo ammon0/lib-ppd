@@ -53,7 +53,7 @@
 </div><!--header-->
 <div class="contents">
 
-<p>A PPD representation of an integer variable.  
+<p>A PPD representation of an integer variable The way signedness is represented is machine dependent so the machine instructions for signed and unsigned arithmetic may be different.  
  <a href="structPPD__Integer.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="definitions_8hpp_source.html">definitions.hpp</a>&gt;</code></p>
@@ -73,20 +73,33 @@ Public Member Functions</h2></td></tr>
 umax&#160;</td><td class="memItemRight" valign="bottom"><b>get_value</b> (void) const </td></tr>
 <tr class="separator:a84a6e546dcfd8ffe63fbbbabaf323dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae11489769e168391bfb423f0fc1582ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae11489769e168391bfb423f0fc1582ae"></a>
-width_t&#160;</td><td class="memItemRight" valign="bottom"><b>get_width</b> (void) const </td></tr>
+width_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPPD__Integer.html#ae11489769e168391bfb423f0fc1582ae">get_width</a> (void) const </td></tr>
+<tr class="memdesc:ae11489769e168391bfb423f0fc1582ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the integer width <br /></td></tr>
 <tr class="separator:ae11489769e168391bfb423f0fc1582ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a8fefdd0690421e6afda815568ab7d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a8fefdd0690421e6afda815568ab7d4"></a>
-signedness_t&#160;</td><td class="memItemRight" valign="bottom"><b>is_signed</b> (void) const </td></tr>
+signedness_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPPD__Integer.html#a3a8fefdd0690421e6afda815568ab7d4">is_signed</a> (void) const </td></tr>
+<tr class="memdesc:a3a8fefdd0690421e6afda815568ab7d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the signedness of the integer <br /></td></tr>
 <tr class="separator:a3a8fefdd0690421e6afda815568ab7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a751cb143d08abfb18efe12576773963f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a751cb143d08abfb18efe12576773963f"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (void) const </td></tr>
-<tr class="separator:a751cb143d08abfb18efe12576773963f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae138a56b76df4d54da849ec653301d40"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae138a56b76df4d54da849ec653301d40"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPPD__Integer.html#ae138a56b76df4d54da849ec653301d40">set_sval</a> (imax i)</td></tr>
+<tr class="memdesc:ae138a56b76df4d54da849ec653301d40"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the integer with a signed value <br /></td></tr>
+<tr class="separator:ae138a56b76df4d54da849ec653301d40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d72d603b0f7dfa32ec130b65b1b0fa1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d72d603b0f7dfa32ec130b65b1b0fa1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPPD__Integer.html#a3d72d603b0f7dfa32ec130b65b1b0fa1">set_uval</a> (umax i)</td></tr>
+<tr class="memdesc:a3d72d603b0f7dfa32ec130b65b1b0fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the integer with an unsigned value <br /></td></tr>
+<tr class="separator:a3d72d603b0f7dfa32ec130b65b1b0fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38c17d6f4d377dd31666f576c698a454"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38c17d6f4d377dd31666f576c698a454"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPPD__Integer.html#a38c17d6f4d377dd31666f576c698a454">set_width</a> (width_t w)</td></tr>
+<tr class="memdesc:a38c17d6f4d377dd31666f576c698a454"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the integer's width <br /></td></tr>
+<tr class="separator:a38c17d6f4d377dd31666f576c698a454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPPD__Definition"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPPD__Definition')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPPD__Definition.html">PPD_Definition</a></td></tr>
 <tr class="memitem:ae0abf265ffa7c9d7b89747abb3cb9a9b inherit pub_methods_classPPD__Definition"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0abf265ffa7c9d7b89747abb3cb9a9b"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>get_size</b> (void) const </td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPPD__Definition.html#ae0abf265ffa7c9d7b89747abb3cb9a9b">get_size</a> (void) const </td></tr>
+<tr class="memdesc:ae0abf265ffa7c9d7b89747abb3cb9a9b inherit pub_methods_classPPD__Definition"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the size in bytes of this defintion (if known) <br /></td></tr>
 <tr class="separator:ae0abf265ffa7c9d7b89747abb3cb9a9b inherit pub_methods_classPPD__Definition"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa87d3781f130b8d39f2aa7fa70df38cd inherit pub_methods_classPPD__Definition"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa87d3781f130b8d39f2aa7fa70df38cd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_size</b> (size_t bytes)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPPD__Definition.html#aa87d3781f130b8d39f2aa7fa70df38cd">set_size</a> (size_t bytes)</td></tr>
+<tr class="memdesc:aa87d3781f130b8d39f2aa7fa70df38cd inherit pub_methods_classPPD__Definition"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the size in bytes of this definition <br /></td></tr>
 <tr class="separator:aa87d3781f130b8d39f2aa7fa70df38cd inherit pub_methods_classPPD__Definition"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -102,7 +115,7 @@ umax&#160;</td><td class="memItemRight" valign="bottom"><b>value</b></td></tr>
 <tr class="separator:a856be58a6b84698c6d2486916f52214c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A PPD representation of an integer variable. </p>
+<div class="textblock"><p>A PPD representation of an integer variable The way signedness is represented is machine dependent so the machine instructions for signed and unsigned arithmetic may be different. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>ppd/<a class="el" href="definitions_8hpp_source.html">definitions.hpp</a></li>
 </ul>
