@@ -13,7 +13,7 @@
 #ifndef ROUTINE_HPP
 #define ROUTINE_HPP
 
-#include "sym.hpp"
+#include <ppd/label.hpp>
 
 
 
@@ -147,10 +147,10 @@ typedef enum {
 	i_NUM
 } inst_code;
 
-/**	This is a Quad instruction
+/**	These are the PPD representation of instruction triples. The destination parameter must always be an l-value.
  */
 typedef struct{
-	lbl_pt    dest; // the destination must always be an l-value.
+	lbl_pt    dest;
 	lbl_pt    left;
 	lbl_pt    right;
 	inst_code op;
@@ -166,6 +166,9 @@ typedef Instruction * inst_pt;
 /******************************************************************************/
 
 
+
+/**	A container for a `basic block`
+*/
 class Block{
 	DS q;
 public:
@@ -202,6 +205,8 @@ typedef Block * blk_pt;
 /******************************************************************************/
 
 
+/**	A container for a complete program routine
+*/
 class PPD_Routine: public PPD_Definition{
 	DS blocks;
 	
@@ -222,7 +227,6 @@ public:
 	blk_pt first(void) const;
 	blk_pt next (void) const;
 	
-	sym_t        get_type(void)const{ return st_routine; }
 	const char * print(void) const;
 	
 	/******************************* MUTATORS *********************************/

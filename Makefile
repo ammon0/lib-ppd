@@ -29,18 +29,18 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp)
 allfiles:= $(headers) $(cpp_sources) $(prv_headers)
 
 # Object files
-ppd_objects :=block.o container.o routine.o sym.o
+ppd_objects :=block.o routine.o
 pexe_objects:=gen-pexe.o read-pexe.o
 mpl_objects:=gen-mpl.o read-mpl.o
 opt_objects :=opt-dead.o
 
 # Prefix the object files
 ppd_objects :=$(addprefix $(WORKDIR)/, $(ppd_objects) )
-gen_objects :=$(addprefix $(WORKDIR)/, $(gen_objects) )
 pexe_objects:=$(addprefix $(WORKDIR)/, $(pexe_objects))
+mpl_objects :=$(addprefix $(WORKDIR)/, $(gen_objects) )
 opt_objects :=$(addprefix $(WORKDIR)/, $(opt_objects) )
 
-CPP_OBJECTS:= $(ppd_objects) $(opt_objects) $(gen_objects) $(pexe_objects)
+CPP_OBJECTS:= $(ppd_objects) $(mpl_objects) $(pexe_objects) $(opt_objects)
 
 
 #################################### FLAGS #####################################
@@ -118,7 +118,10 @@ install: $(headers) libppd.a
 
 cleanfiles:=*.a *.o
 
-.PHONEY: clean todolist count
+.PHONEY: clean todolist count veryclean
+
+veryclean: clean
+	rm -r ./docs/
 
 clean:
 	rm -f $(cleanfiles)

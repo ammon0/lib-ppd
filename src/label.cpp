@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-#include <ppd/sym.hpp>
+#include <ppd/label.hpp>
 
 const char * PPD_Integer::print(void)const{
 	static char string[30] = "bytes 0 +00000000000000000000";
