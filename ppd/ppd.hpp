@@ -1,11 +1,11 @@
 /*******************************************************************************
  *
- *	MPL : Minimum Portable Language
+ *	Lib-ppd : Portable Program Data Library
  *
- *	Copyright (c) 2017 Ammon Dodson
+ *	Copyright (c) 2018 Ammon Dodson
  *	You should have received a copy of the license terms with this software. If
  *	not, please visit the project homepage at:
- *	https://github.com/ammon0/MPL
+ *	https://github.com/ammon0/lib-ppd
  *
  ******************************************************************************/
 
@@ -50,6 +50,8 @@ public:
 	def_pt AddDef(def_pt definition); ///< add a new definition
 };
 
+/// A reference to a PPD Module
+typedef PPD_Module * PPD_ModRef;
 
 #endif // _PPD_HPP
 

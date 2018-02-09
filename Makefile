@@ -2,10 +2,10 @@
 #
 #	lib-ppd : PORTABLE PROGRAM DATA LIBRARY
 #
-#	Copyright (c) 2017 Ammon Dodson
+#	Copyright (c) 2018 Ammon Dodson
 #	You should have received a copy of the licence terms with this software. If
 #	not, please visit the project homepage at:
-#	https://github.com/ammon0/MPL
+#	https://github.com/ammon0/lib-ppd
 #
 ################################################################################
 
@@ -24,23 +24,26 @@ INCDIR    :=$(INSTALLDIR)/include
 
 headers:=$(wildcard $(headerdir)/*.hpp)
 cpp_sources:=$(wildcard $(srcdir)/*.cpp)
-prv_headers:=$(wildcard $(srcdir)/*.hpp)
+prv_headers:=$(wildcard $(srcdir)/*.hpp) $(wildcard $(srcdir)/*.h)
 
 allfiles:= $(headers) $(cpp_sources) $(prv_headers)
 
 # Object files
 ppd_objects :=routine.o ppd.o definitions.o
 pexe_objects:=gen-pexe.o read-pexe.o
-mpl_objects:=gen-mpl.o read-mpl.o
+mpl_objects:=gen-mpl.o read-mpl.o 
 opt_objects :=opt-dead.o
+flex_objects:=mpl.l.o
 
 # Prefix the object files
 ppd_objects :=$(addprefix $(WORKDIR)/, $(ppd_objects) )
 pexe_objects:=$(addprefix $(WORKDIR)/, $(pexe_objects))
-mpl_objects :=$(addprefix $(WORKDIR)/, $(gen_objects) )
+mpl_objects :=$(addprefix $(WORKDIR)/, $(mpl_objects) )
 opt_objects :=$(addprefix $(WORKDIR)/, $(opt_objects) )
+flex_objects:=$(addprefix $(WORKDIR)/, $(flex_objects))
 
-CPP_OBJECTS:= $(ppd_objects) $(mpl_objects) $(pexe_objects) $(opt_objects)
+cpp_objects:= $(ppd_objects) $(mpl_objects) $(pexe_objects) $(opt_objects)
+c_objects  := $(flex_objects)
 
 
 #################################### FLAGS #####################################
@@ -49,7 +52,7 @@ CPP_OBJECTS:= $(ppd_objects) $(mpl_objects) $(pexe_objects) $(opt_objects)
 # My code builds without warnings--ALWAYS
 CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations \
-	-Wredundant-decls -Werror=implicit-function-declaration -Wnested-externs \
+	-Wredundant-decls  -Wnested-externs \
 	-Wshadow -Wbad-function-cast \
 	-Wcast-align \
 	-Wdeclaration-after-statement -Werror=uninitialized \
@@ -59,8 +62,9 @@ CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wsuggest-attribute=noreturn -Wsuggest-attribute=format \
 	-Wtrampolines -Wstack-protector \
 	-Wwrite-strings \
-	-Wconversion -Wdisabled-optimization \
-	 -Wc++-compat -Wpadded
+	-Wdisabled-optimization \
+	-Wc++-compat -Wpadded 
+	#-Wconversion -Werror=implicit-function-declaration
 
 CXXWARNINGS:=-Wall -Wextra -pedantic \
 	-Wmissing-declarations -Werror=implicit-function-declaration \
@@ -94,14 +98,20 @@ debug: libppd.a
 ################################# PRODUCTIONS ##################################
 
 
-libppd.a: $(ppd_objects)
-	ar rcs $@ $(ppd_objects)
+libppd.a: $(ppd_objects) $(mpl_objects) $(flex_objects)
+	ar rcs $@ $(ppd_objects) $(mpl_objects)
+
+$(srcdir)/mpl.l.c: $(srcdir)/mpl.l
+	$(LEX) $(LFLAGS) -o $@ $<
 
 docs: Doxyfile README.md $(allfiles)
 	doxygen Doxyfile
 
-$(CPP_OBJECTS): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WORKDIR)
+$(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WORKDIR)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 # working directory
 $(WORKDIR):

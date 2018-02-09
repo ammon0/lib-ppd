@@ -2,15 +2,15 @@
  *
  *	Lib-ppd : Portable Program Data Library
  *
- *	Copyright (c) 2017 Ammon Dodson
+ *	Copyright (c) 2018 Ammon Dodson
  *	You should have received a copy of the license terms with this software. If
  *	not, please visit the project homepage at:
  *	https://github.com/ammon0/lib-ppd
  *
  ******************************************************************************/
 
-#include <ppd/gen.hpp>
 
+#include <ppd/mpl.hpp>
 #include <util/msg.h>
 
 
@@ -21,101 +21,57 @@ static inline int comment(const char * s){
 }
 
 
-static void Gen_static(lbl_pt lbl){
+
+
+
+return_t PrintMPL(FILE * outfile, PPD_ModRef memory){
 	
-}
-
-static void Gen_routine(lbl_pt name, Routine * code){
-	
-}
-
-
-
-void mpl(FILE * out_fd, PPD * prog){
-	int test_int;
-	lbl_pt lbl;
 	
 	msg_print(NULL, V_INFO, "mpl(): start\n");
 	
-	if(!out_fd){
+	if(!outfile){
 		msg_print(NULL, V_ERROR, "mpl(): out_fd is NULL\n");
-		throw;
+		return failure;
 	}
 	
-	out = out_fd;
-	test_int = comment("This is an MPL source file");
-	if(test_int < 0){
+	
+	out = outfile;
+	if(comment("This is an MPL source file") < 0){
 		msg_print(NULL, V_ERROR, "mpl(): out_fd is not writable.\n");
-		throw;
+		return failure;
 	}
-	
 	
 	
 	/*********** DECLARE STRUCTURES ***********/
 	
+	comment("== STRUCTURE OFFSETS ==");
 	
 	/*********** DECLARE VISIBILITY ***********/
 	
+	comment("== VISIBILITY ==");
+	
+	/************* READ ONLY DATA *************/
+	
+	comment("== STATIC READ ONLY DATA ==");
 	
 	/************* DECLARE STRINGS ************/
 	
-	comment("== Static Strings ==");
+	comment("== READ ONLY STRINGS ==");
 	
-	lbl=dynamic_cast<lbl_pt>(prog->symbols.first());
+	/************ VARIABLE DATA ************/
 	
-	do{
-		
-	}while(( lbl=dynamic_cast<lbl_pt>(prog->symbols.next()) ));
-	
-	/************ STATIC VARIABLES ************/
-	
-	comment("== Static Variables ==");
-	
-	lbl=dynamic_cast<lbl_pt>(prog->symbols.first());
-	
-	do{
-		if(lbl){
-			if(lbl->get_def()->get_type() == st_routine) break;
-			
-			switch(lbl->get_mode()){
-			case am_static_priv:
-			case am_static_pub :
-				Gen_static(lbl);
-				break;
-	
-			// ignore
-			case am_stack_aparam:
-			case am_stack_fparam:
-			case am_stack_auto:
-			case am_temp  :
-			case am_static_extern:
-			case am_constant: break;
-	
-			//error
-			case am_none:
-			case am_NUM:
-			default: throw;
-			}
-		}
-	}while(( lbl=dynamic_cast<lbl_pt>(prog->symbols.next()) ));
+	comment("== STATIC VARIABLE DATA ==");
 	
 	/************** PROGRAM CODE **************/
 	
-	comment("== Program Code ==");
-	
-	lbl=dynamic_cast<lbl_pt>(prog->symbols.first());
-	
-	do{
-		if(lbl && lbl->get_def()->get_type() == st_routine)
-			Gen_routine(
-				lbl,
-				dynamic_cast<Routine*>(lbl->get_def())
-			);
-	}while(( lbl=dynamic_cast<lbl_pt>(prog->symbols.next()) ));
+	comment("== PROGRAM CODE ==");
 	
 	
-	comment("== End ==");
+	
+	comment("== END ==");
 	msg_print(NULL, V_INFO, "mpl(): stop\n");
+	
+	return success;
 }
 
 
