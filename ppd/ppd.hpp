@@ -42,6 +42,10 @@ public:
 	lbl_pt first(      void       ) const; ///< Returns the first label
 	lbl_pt next (      void       ) const; ///< Returns the next label
 	
+	void   dump_stderr(void          ) const; ///< Dump to stderr
+	void   dump_file  (FILE * outfile) const; ///< Dump to file
+	char * dump_str   (void          ) const; ///< Dump to a string
+	
 	/******************************* MUTATORS *********************************/
 	
 	lbl_pt remove(const char   * name  ); ///< Remove an label by its name

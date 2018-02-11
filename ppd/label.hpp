@@ -17,6 +17,7 @@
 #include "ppd/definitions.hpp"
 
 #include <util/types.h>
+#include <util/msg.h>
 #include <string>
 
 
@@ -59,14 +60,14 @@ public:
 	
 protected:
 	constexpr static const char * str_sclass[am_NUM]= {
-		"none  ",
+		"NONE  ",
 		"pub   ",
 		"prv   ",
 		"extern",
 		"fparam",
 		"aparam",
 		"auto  ",
-		"temp  ",
+		"TEMP  ",
 		"const "
 	}; ///< to facilitate the print funtions
 	
@@ -85,12 +86,72 @@ public:
 		if(mode != am_constant) throw;
 		return static_cast<PPD_Integer*>(def)->get_value();
 	}
-	const char * print(void) const{}
+	
+	
+	const char * print_declaration(void) const{
+		static std::string buffer; // wish I had closures instead
+		
+		switch(mode){
+		case am_static_pub:
+			buffer = ".global ";
+			buffer += name;
+			return buffer.c_str();
+		case am_static_extern:
+			buffer = ".extern ";
+			buffer += name;
+			return buffer.c_str();
+		case am_stack_fparam:
+		case am_stack_aparam:
+		case am_constant:
+		
+		case am_static_priv:
+		case am_none:
+		case am_temp:
+		case am_NUM:
+		default:
+			msg_print(NULL, V_ERROR,
+				"internal: PPD_Label::print_declaration(): invalid mode.\n");
+			return NULL;
+		}
+	}
+	
+	const char * print_definition(void) const{
+		static std::string buffer; // wish I had closures instead
+		
+		switch(mode){
+		case am_static_pub:
+		case am_static_priv:
+		case am_static_extern:
+			buffer = name;
+			buffer += ": ";
+			if(def) buffer += def->print();
+			return buffer.c_str();
+		
+		case am_stack_fparam:
+		case am_stack_aparam:
+		
+		case am_constant:
+		case am_none:
+		case am_temp:
+		case am_NUM:
+		default:
+			msg_print(NULL, V_ERROR,
+				"internal: PPD_Label::print_declaration(): invalid mode.\n");
+			return NULL;
+		}
+	}
 	
 	/******************************* MUTATORS *********************************/
 	
-	void set_def(def_pt definition) { def = definition; }
 	void set_mode(access_mode m) { mode = m; }
+	void set_def(def_pt definition) {
+		if(mode == am_none || mode == am_temp){
+			msg_print(NULL, V_ERROR,
+				"internal: PPD_Label::set_def(): cannot set definition on am_temp or am_none\n");
+			throw;
+		}
+		def = definition;
+	}
 	
 };
 

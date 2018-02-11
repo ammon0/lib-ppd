@@ -14,6 +14,7 @@
 #define DEFINITIONS_HPP
 
 #include <util/types.h>
+#include <util/msg.h>
 #include <string>
 
 typedef struct _root     * DS;
@@ -38,6 +39,7 @@ public:
 	
 	/// returns the size in bytes of this defintion (if known)
 	size_t get_size(void)const{ return size; }
+	virtual const std::string print(void) const=0;
 	
 	/******************************* MUTATORS *********************************/
 	
@@ -95,19 +97,55 @@ public:
 	/// get the signedness of the integer
 	signedness_t is_signed(void)const{ return signd ; }
 	
+	const std::string print(void) const{
+		static std::string buffer;
+		
+		switch (signd){
+		case s_signed  : buffer = "s"; break;
+		case s_unsigned: buffer = "u"; break;
+		case s_undef:
+		case s_NUM:
+		default:
+			msg_print(NULL, V_ERROR,
+				"internal: PPD_Integer::print(): invalid signedness_t\n");
+			return NULL;
+		}
+		
+		switch(width){
+		case w_byte : buffer += "8"   ; break;
+		case w_byte2: buffer += "16"  ; break;
+		case w_byte4: buffer += "32"  ; break;
+		case w_byte8: buffer += "64"  ; break;
+		case w_max  : buffer += "max" ; break;
+		case w_word : buffer += "word"; break;
+		case w_ptr  : buffer  = "ptr" ; break;
+		
+		case w_none:
+		case w_NUM:
+		default:
+			msg_print(NULL, V_ERROR,
+				"internal: PPD_Integer::print(): invalid width_t\n");
+			return NULL;
+		}
+		
+		// FIXME: if value
+		
+		return buffer;
+	}
+	
 	/******************************* MUTATORS *********************************/
 	
 	/// set the integer with a signed value
-	void set_sval (imax i   ){ value = i; signd = s_signed  ; }
+	void set_sval (imax i){ value = i; signd = s_signed  ; }
 	/// set the integer with an unsigned value
-	void set_uval (umax i   ){ value = i; signd = s_unsigned; }
+	void set_uval (umax i){ value = i; signd = s_unsigned; }
 	/// set the integer's width
 	void set_width(width_t w){ width = w; }
 };
 
 
 /******************************************************************************/
-//                                 ARRAY TYPE
+//                                 ARRAY TYPES
 /******************************************************************************/
 
 
@@ -126,12 +164,40 @@ public:
 	
 	/// returns a def_pt for the contents of each array cell
 	def_pt get_child(void)const{ return chld   ; }
-	const char * print(void) const{}
+	const std::string print(void) const{} ///< return the MPL for this array
 	
 	/******************************* MUTATORS *********************************/
 	
 	void set_child(def_pt child){ chld = child; }
 	void set_count(umax count){ cnt = count; }
+};
+
+/**	A PPD representation of a string
+*/
+class PPD_String: public PPD_Definition{
+	std::string val;
+	
+public:
+	/****************************** CONSTRUCTOR *******************************/
+	
+	PPD_String();
+	
+	/******************************* ACCESSOR *********************************/
+	
+	/// Return the MPL for the string
+	const std::string print(void) const{
+		static std::string buffer;
+		
+		buffer = ".string ";
+		buffer += '"';
+		buffer += val;
+		buffer += '"';
+		return buffer;
+	}
+	
+	/******************************* MUTATORS *********************************/
+	
+	
 };
 
 
@@ -155,12 +221,14 @@ public:
 	
 	/******************************* ACCESSOR *********************************/
 	
-	bool isempty(void) const;
-	umax count  (void) const;
+	bool isempty(void) const; ///< return if the struct is empty
+	umax count  (void) const; ///< return the count of fields in this struct
 	
 	lbl_pt find (const char * name) const; ///< Find a label by name
 	lbl_pt first(void             ) const; ///< get the first label
 	lbl_pt next (void             ) const; ///< get the next label
+	
+	const std::string print(void) const; ///< Return the MPL for this definition
 	
 	/******************************* MUTATORS *********************************/
 	

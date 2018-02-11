@@ -48,7 +48,7 @@
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classPPD__Definition-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">PPD_Definition Class Reference</div>  </div>
+<div class="title">PPD_Definition Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -65,7 +65,8 @@ Inheritance diagram for PPD_Definition:</div>
 <area href="classPPD__Array.html" title="A PPD representation of an array. " alt="PPD_Array" shape="rect" coords="0,56,97,80"/>
 <area href="structPPD__Integer.html" title="A PPD representation of an integer variable The way signedness is represented is machine dependent so..." alt="PPD_Integer" shape="rect" coords="107,56,204,80"/>
 <area href="classPPD__Routine.html" title="A container for a complete program routine. " alt="PPD_Routine" shape="rect" coords="214,56,311,80"/>
-<area href="classPPD__Structure.html" title="A PPD representation of a structure. " alt="PPD_Structure" shape="rect" coords="321,56,418,80"/>
+<area href="classPPD__String.html" title="A PPD representation of a string. " alt="PPD_String" shape="rect" coords="321,56,418,80"/>
+<area href="classPPD__Structure.html" title="A PPD representation of a structure. " alt="PPD_Structure" shape="rect" coords="428,56,525,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -75,6 +76,9 @@ Public Member Functions</h2></td></tr>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPPD__Definition.html#ae0abf265ffa7c9d7b89747abb3cb9a9b">get_size</a> (void) const </td></tr>
 <tr class="memdesc:ae0abf265ffa7c9d7b89747abb3cb9a9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the size in bytes of this defintion (if known) <br /></td></tr>
 <tr class="separator:ae0abf265ffa7c9d7b89747abb3cb9a9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af36ae5f93ce41e520a52ffc3c17969c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af36ae5f93ce41e520a52ffc3c17969c2"></a>
+virtual const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (void) const =0</td></tr>
+<tr class="separator:af36ae5f93ce41e520a52ffc3c17969c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa87d3781f130b8d39f2aa7fa70df38cd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa87d3781f130b8d39f2aa7fa70df38cd"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPPD__Definition.html#aa87d3781f130b8d39f2aa7fa70df38cd">set_size</a> (size_t bytes)</td></tr>
 <tr class="memdesc:aa87d3781f130b8d39f2aa7fa70df38cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the size in bytes of this definition <br /></td></tr>

@@ -38,11 +38,40 @@ the rest of the scanner.
 typedef enum{
 	T_EOF,
 	T_NL,
-	T_NUM,
+	T_INT,
 	T_STR,
 	T_CHAR,
-	T_NAME
+	T_LBL,
+	
+	
+	
+	// directives
+	
+	// instructions
+	
+	NUM_TOKENS
 } token_t;
+
+
+#ifdef _MPL_L
+	#define EXTERN
+#else
+	#define EXTERN extern
+#endif
+
+EXTERN const char * token_dex[NUM_TOKENS]
+#ifdef _GLOBAL_C
+	= {
+		// Formatting
+		"End of File", "New Line",
+		// Primary
+		"Integer", "String", "Character"
+	}
+#endif // _GLOBALS_C
+;
+
+
+#undef EXTERN
 
 
 /******************************************************************************/

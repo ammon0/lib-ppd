@@ -22,11 +22,12 @@ INSTALLDIR:=$(HOME)/prg
 LIBDIR    :=$(INSTALLDIR)/lib
 INCDIR    :=$(INSTALLDIR)/include
 
-headers:=$(wildcard $(headerdir)/*.hpp)
+headers    :=$(wildcard $(headerdir)/*.hpp)
 cpp_sources:=$(wildcard $(srcdir)/*.cpp)
+c_sources  :=$(wildcard $(srcdir)/*.c)
 prv_headers:=$(wildcard $(srcdir)/*.hpp) $(wildcard $(srcdir)/*.h)
 
-allfiles:= $(headers) $(cpp_sources) $(prv_headers)
+allfiles:= $(headers) $(cpp_sources) $(c_sources) $(prv_headers)
 
 # Object files
 ppd_objects :=routine.o ppd.o definitions.o

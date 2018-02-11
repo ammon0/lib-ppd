@@ -27,7 +27,7 @@ static inline int comment(const char * s){
 return_t PrintMPL(FILE * outfile, PPD_ModRef memory){
 	
 	
-	msg_print(NULL, V_INFO, "mpl(): start\n");
+	msg_print(NULL, V_TRACE, "PrintMPL(): start\n");
 	
 	if(!outfile){
 		msg_print(NULL, V_ERROR, "mpl(): out_fd is NULL\n");
@@ -69,7 +69,7 @@ return_t PrintMPL(FILE * outfile, PPD_ModRef memory){
 	
 	
 	comment("== END ==");
-	msg_print(NULL, V_INFO, "mpl(): stop\n");
+	msg_print(NULL, V_TRACE, "PrintMPL(): stop\n");
 	
 	return success;
 }

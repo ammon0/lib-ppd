@@ -13,6 +13,7 @@
 
 #define _MPL_L
 #include "lex.h"
+#include <stdio.h>
 
 
 %}
@@ -40,7 +41,7 @@ WHTSPC [ \t\v]
 NL     (\r|\r\n|\n)
 ESCNL  ({WHTSPC})*\\{NL}({WHTSPC})*
 
-NEWL   ({WHTSPC})*(\r|\r\n|\n)
+NEWL   ({WHTSPC})*({NL})
 
 
 /******************************************************************************/
@@ -49,14 +50,14 @@ NEWL   ({WHTSPC})*(\r|\r\n|\n)
 %%
 
 
-<INITIAL>^({NEWL})    {              } // ignore empty lines
-<INITIAL>{NEWL}       { return T_NL; } // report the rest
+^({NEWL})    {              } // ignore empty lines
+{NEWL}       { return T_NL; } // report the rest
 
-<INITIAL>{ESCNL}     {} // ignore escaped newlines
-<INITIAL>({WHTSPC})  {} // ignore all other whitespace
+{ESCNL}     {} // ignore escaped newlines
+({WHTSPC})  {} // ignore all other whitespace
 
 
-<INITIAL><<EOF>> {
+<<EOF>> {
 	// if this file was an include, will return to
 	// previous point. pops and delete's buffer. see <INCLUDE>
 	yypop_buffer_state();
@@ -74,9 +75,9 @@ NEWL   ({WHTSPC})*(\r|\r\n|\n)
 ({WHTSPC})*#+\ .*{NEWL} { return T_NL; } // line comment
 
 
-{NAME} return T_NAME;
 
-<INITIAL>{HEX}|({DIGIT})+ return T_NUM;
+
+{HEX}|({DIGIT})+ return T_INT;
 
 \'               BEGIN(CHAR);
 <CHAR>(\\.|[^']) return T_CHAR; // an escaped anything \\. or a non-quote [^']

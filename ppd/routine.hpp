@@ -211,26 +211,30 @@ class PPD_Routine: public PPD_Definition{
 	DS blocks;
 	
 public:
-	PPD_Structure formal_params;
-	PPD_Structure auto_storage;
+	PPD_Structure formal_params; ///< list of parameters
+	PPD_Structure auto_storage; ///< list of auto variables
 	uint      concurrent_temps=0;
+	///< number of temp variables needed to implement this routine
 	
 	/****************************** CONSTRUCTOR *******************************/
 	
-	PPD_Routine(const char * full_name);
+	PPD_Routine(void);
 	~PPD_Routine(void);
 	
 	/******************************* ACCESSOR *********************************/
 	
+	/// return if there are any basic blocks in this fucntion
 	bool isempty(void) const;
 	
-	blk_pt first(void) const;
-	blk_pt next (void) const;
+	blk_pt first(void) const; ///< return a reference to the first basic block
+	blk_pt next (void) const; ///< return a reference to the next basic block
 	
-	const char * print(void) const;
+	/// Return the MPL for the entire function
+	const std::string print(void) const;
 	
 	/******************************* MUTATORS *********************************/
 	
+	/// add an instruction to the end of this routine
 	inst_pt add_inst (inst_pt instruction);
 };
 
