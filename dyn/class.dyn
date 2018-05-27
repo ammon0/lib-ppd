@@ -1,0 +1,184 @@
+
+
+##############################################################################
+#                                 CLASS
+##############################################################################
+
+
+Class:Class{
+	<Class> superClass = Object
+	methodDictionary
+	instanceSpec
+	<Set<Class>> subClasses = nil
+	
+	<Array> instanceVariables = {"superClass", "methodDictionary", "instanceSpec", "subClasses", "instanceVariables", "name", "comment"}
+	
+	<String> name = "Class"
+	<String> comment = "All classes are instances of this Object."
+	
+}methods{
+	
+	%% # methods
+	
+	############################### ACCESSORS ################################
+	
+	# Acessing methods and selectors #
+	
+	<Set> selectors ()
+	
+	<Set> allSelectors ()
+	
+	<CompiledMethod> compiledMethodAt(selector)
+	
+	<String> sourceCodeAt(selector)
+	
+	# Accessing instances and variables #
+	
+	<Set> allInstances ()
+	
+	# an existing instance of receiver
+	someInstance {}
+	
+	<Integer> instanceCount ()
+	
+	<Array> instVarNames {}
+	
+	<Set> subclassInstVarNames {}
+	
+	<Array> allInstVarNames {}
+	
+	<Set> classVarNames {}
+	
+	<Set> allClassVarNames {}
+	
+	# Accessing the Class Hierarchy #
+	
+	<Set> allSubclasses {}
+	
+	<Set> withAllSubclasses {}
+	
+	<OrderedCollection> allSuperclasses {}
+	
+	################################ CREATING ################################
+	
+	# Method Dictionary #
+	
+	<> addSelector(selector, <compiledMethod> compiledMethod){}
+	
+	<> removeSelector (selector){}
+	
+	<compiledMethod> compile (<String> code){}
+	
+	<compiledMethod> compile(<String> code, requestor){}
+	
+	<> recompile (selector)
+	
+	decompile (selector)
+	
+	<> compileAll
+	
+	<> compileAllSubclasses
+	
+	# Creating Instances #
+	
+	<Object> new {}
+	
+	<Object> basicNew {}
+	
+	<Object> new (<Integer> anInteger){}
+	
+	<Object> basicNew (<Integer> anInteger){}
+	
+	# Creating a Class Hierarchy #
+	
+	<> addSubclass (<Class> aClass){}
+	
+	<> removeSubclass (<Class> aClass){}
+	
+	addInstVar {<String> aString}
+	
+	removeInstVar {<String> aString}
+	
+	
+	initialize
+	
+	
+	makeSubclass {
+		<String>name,
+		<String> instanceVariableNames,
+		<String> classVariableNames
+	}
+	
+	makeVariableSubclass {
+		<String>name,
+		<String> instanceVariableNames,
+		<String> classVariableNames,
+		<Integer> count
+	}
+	
+	
+	################################# TESTING ################################
+	
+	# Testing the contents of the method dictionary #
+	
+	<Bool> hasMethods
+	
+	<Bool> includesSelector {selector}
+	
+	<Bool> canUnderstand {selector}
+	
+	<ClassDescription> whichClassIncludesSelector {selector}
+	
+	<Set> whichSelectorsAccess {instVarName}
+	
+	<Set> whichSelectorsReferTo {<Object>anObject}
+	
+	<Bool> scopeHas {name}
+	
+	# Testing the form of the instances #
+	
+	<Bool> isBytes
+	
+	<Bool> isFixed
+	
+	<Bool> isVariable
+	
+	<Integer> instSize
+	
+	# etc
+	
+	# Testing the class hierachy #
+	
+	<Bool> inheritsFrom {<Class> aClass}
+	
+	kindOfSubclass
+	
+	############################## ENUMERATING ###############################
+	
+	allSubclassesDo {<Block> aBlock}
+	
+	allSuperclassesDo {<Block> aBlock}
+	
+	allInstancesDo {<Block> aBlock}
+	
+	allSubinstancesDo {<Block> aBlock}
+	
+	<Set> selectSubclasses {<Block> aBlock}
+	
+	<Set> selectSuperclasses {<Block> aBlock}
+	
+	<String> classVariableString
+	
+	<String> instanceVariableString
+	
+	<String> sharedVariableString
+	
+	
+	# Serializing #
+	
+	fileOutOn {aFileStream}
+	
+	
+	
+}
+

@@ -11,9 +11,16 @@
  *
  ******************************************************************************/
 
-#define _MPL_L
-#include "lex.h"
+#define _DYN_L
+#include "dyn.h"
 #include <stdio.h>
+#include <util/msg.h>
+
+
+/// Report errors in the scanner
+static inline void scan_error(const char * message){
+	msg_print(NULL, V_ERROR, "scanner: %s, on line %d\n", message, yylineno);
+}
 
 
 %}
@@ -74,6 +81,9 @@ NEWL   ({WHTSPC})*({NL})
 
 ({WHTSPC})*#+\ .*{NEWL} { return T_NL; } // line comment
 
+
+
+RETURN { return T_RET; }
 
 
 

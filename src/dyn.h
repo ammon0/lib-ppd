@@ -13,8 +13,8 @@
 the rest of the scanner.
 */
 
-#ifndef _LEX_H
-#define _LEX_H
+#ifndef _DYN_H
+#define _DYN_H
 
 #ifdef __cplusplus
 	extern "C" {
@@ -26,7 +26,7 @@ the rest of the scanner.
 
 
 #include <util/types.h>
-#include <util/msg.h>
+
 #include <stdio.h>
 
 
@@ -41,19 +41,21 @@ typedef enum{
 	T_INT,
 	T_STR,
 	T_CHAR,
-	T_LBL,
+	T_NAME,
 	
 	
 	
 	// directives
+	T_METH, // indicates begining of methods section
 	
 	// instructions
 	
+	T_RET,
 	NUM_TOKENS
 } token_t;
 
 
-#ifdef _MPL_L
+#ifdef _DYN_L
 	#define EXTERN
 #else
 	#define EXTERN extern
@@ -65,7 +67,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		// Formatting
 		"End of File", "New Line",
 		// Primary
-		"Integer", "String", "Character"
+		"Integer", "String", "Character", "Name"
 	}
 #endif // _GLOBALS_C
 ;
@@ -80,7 +82,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 
 
 // Global variables provided by the scanner
-#ifndef _MPL_L
+#ifndef _DYN_L
 	extern int    yylineno;
 	extern char * yytext;
 	extern int    yyleng; ///< the length of yytext
@@ -93,11 +95,6 @@ EXTERN const char * token_dex[NUM_TOKENS]
 /******************************************************************************/
 
 
-/// Report errors in the scanner
-static inline void scan_error(const char * message){
-	msg_print(NULL, V_ERROR, "scanner: %s, on line %d\n", message, yylineno);
-}
-
 #define YY_DECL token_t yylex(void)
 token_t yylex(void);
 
@@ -105,6 +102,6 @@ token_t yylex(void);
 	}
 #endif
 
-#endif // _LEX_H
+#endif // _DYN_H
 
 

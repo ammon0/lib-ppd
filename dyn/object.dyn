@@ -1,0 +1,59 @@
+
+
+##############################################################################
+#                                OBJECT
+##############################################################################
+
+
+# an instance of Class called Object
+# being the root of the superClass tree, Object has no superClass
+Class:Object{
+	<Class> superClass = nil
+	methodDictionary
+	instanceSpec
+	<Set<Class>>subClasses = {Class Magnitude Collection}
+	<String> instanceVariables = nil # no guaranteed fields in all objects
+	<String> name = "Object"
+	<String> comment = ""
+	
+	
+METHODS
+	
+	# error handling
+	#error: aString
+	doesNotUnderstand: aMessage
+	primativeFailed
+	subclassResponsibility
+	shouldNotImplement
+
+	# functionality
+	<Class> class
+	<Bool> isKindOf: aClass
+	isMemberOf: aClass
+	respondsTo: aSymbol
+
+	# comparison
+	== anObject # identity
+	= anObject  # equivalency
+	hash
+
+	#<Bool> isNil
+	#<Bool> notNil	can just use equality
+
+	# copying
+	<Object> shallowCopy
+	<Object> deepCopy
+
+	# accessing
+	<Object> [index] # all objects are just arrays
+	<uint> size
+
+	# printing
+	<String> toString
+}
+
+
+
+
+
+
