@@ -30,6 +30,7 @@
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -40,22 +41,14 @@
 <div class="title">Lib-PPD : Portable Program Data </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2>Project Components</h2>
+<div class="textblock"><p>Lib-PPD is meant to be a compiler middle-end supporting a programming language that can run in either a virtual machine or be compiled to native code.</p>
+<h2>Project Components</h2>
 <ul>
 <li>ppd: internal representation</li>
-<li>mpl: textual representation</li>
+<li>dyn: textual representation</li>
 <li>pexe: serialized representation</li>
 </ul>
 <h2>Important Classes</h2>
-<ul>
-<li><code>PPDModule</code>: A compilation unit, standalone or otherwise, Contains static memory information and a list of routines</li>
-<li><code>PPDRoutine</code>:</li>
-<li><code>PPDBlock</code>: Contains a list of PPDInst's with a single entrance label, and a single exit</li>
-<li><code>PPDInst</code>: A data structure containing a PPDInstCode and 2 or 3 arguments</li>
-<li><code>PPDArg</code>: Arguments are referenced by pointers and may include labels, and definitions.</li>
-<li><code>PPDDefs</code>: a container for definitions</li>
-<li><code>PPDDefinition</code>: contains information for determining the size of a memory location or operand. Definitions are unnamed at this level and are accessed by reference.</li>
-</ul>
 <h2>Project Pages</h2>
 <ul>
 <li><a href="https://github.com/ammon0/MPL/releases/latest">Latest Release</a></li>

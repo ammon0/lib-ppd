@@ -1,18 +1,20 @@
 # Lib-PPD : Portable Program Data
 
+Lib-PPD is meant to be a compiler middle-end supporting a programming language that can run in either a virtual machine or be compiled to native code.
+
 ## Project Components
 *	ppd: internal representation
-*	mpl: textual representation
+*	dyn: textual representation
 *	pexe: serialized representation
 
 ## Important Classes
-*	`PPDModule`: A compilation unit, standalone or otherwise, Contains static memory information and a list of routines
-*	`PPDRoutine`: 
-*	`PPDBlock`: Contains a list of PPDInst's with a single entrance label, and a single exit
-*	`PPDInst`: A data structure containing a PPDInstCode and 2 or 3 arguments
-*	`PPDArg`: Arguments are referenced by pointers and may include labels, and definitions.
-*	`PPDDefs`: a container for definitions
-*	`PPDDefinition`: contains information for determining the size of a memory location or operand. Definitions are unnamed at this level and are accessed by reference.
+<!--*	`PPDModule`: A compilation unit, standalone or otherwise, Contains static memory information and a list of routines-->
+<!--*	`PPDRoutine`: -->
+<!--*	`PPDBlock`: Contains a list of PPDInst's with a single entrance label, and a single exit-->
+<!--*	`PPDInst`: A data structure containing a PPDInstCode and 2 or 3 arguments-->
+<!--*	`PPDArg`: Arguments are referenced by pointers and may include labels, and definitions.-->
+<!--*	`PPDDefs`: a container for definitions-->
+<!--*	`PPDDefinition`: contains information for determining the size of a memory location or operand. Definitions are unnamed at this level and are accessed by reference.-->
 
 ## Project Pages
 *	[Latest Release](https://github.com/ammon0/MPL/releases/latest)
