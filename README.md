@@ -7,6 +7,11 @@ Lib-PPD is meant to be a compiler middle-end supporting a programming language t
 *	dyn: textual representation
 *	pexe: serialized representation
 
+
+## System Requirements
+*	64-bit system: I make this assumption for simplicity in dealing with object pointers.
+*	I am assuming that the given system does not use the upper byte of its pointers.
+
 ## Important Classes
 <!--*	`PPDModule`: A compilation unit, standalone or otherwise, Contains static memory information and a list of routines-->
 <!--*	`PPDRoutine`: -->

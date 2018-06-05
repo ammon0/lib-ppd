@@ -64,7 +64,7 @@ NEWL   ({WHTSPC})*({NL})
 ({WHTSPC})  {} // ignore all other whitespace
 
 
-<<EOF>> {
+<INITIAL><<EOF>> {
 	// if this file was an include, will return to
 	// previous point. pops and delete's buffer. see <INCLUDE>
 	yypop_buffer_state();
@@ -82,8 +82,8 @@ NEWL   ({WHTSPC})*({NL})
 ({WHTSPC})*#+\ .*{NEWL} { return T_NL; } // line comment
 
 
-
-RETURN { return T_RET; }
+METHODS { return T_METH; }
+RETURN  { return T_RET; }
 
 
 

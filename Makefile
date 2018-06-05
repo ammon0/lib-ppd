@@ -34,8 +34,8 @@ CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wtrampolines -Wstack-protector \
 	-Wwrite-strings \
 	-Wdisabled-optimization \
-	-Wc++-compat -Wpadded \
-	-Wconversion #-Werror=implicit-function-declaration
+	-Wpadded \
+	-Wconversion #-Werror=implicit-function-declaration -Wc++-compat
 
 CXXWARNINGS:=-Wall -Wextra -pedantic \
 	-Wmissing-declarations -Werror=implicit-function-declaration \
@@ -52,7 +52,7 @@ CXXWARNINGS:=-Wall -Wextra -pedantic \
 
 DEBUG_OPT:=
 
-CFLAGS:=  --std=c11   -g $(CWARNINGS)   -I./ -I$(INCDIR) -L$(LIBDIR)
+CFLAGS:=  --std=c11   -g $(CWARNINGS)   -I./ -I$(INCDIR) -L$(LIBDIR)/util
 CXXFLAGS:=--std=c++14 -g $(CXXWARNINGS) -I./ -I$(INCDIR) -L$(LIBDIR)
 LFLAGS:=-d
 LEX:= flex
@@ -76,11 +76,15 @@ flex_objects:=dyn.l.o
 omem_objects:=object_mem.o
 pexe_objects:=string_table.o
 
+tests:=memtest
+
 
 # Prefix the object files
 flex_objects :=$(addprefix $(WORKDIR)/, $(flex_objects))
 omem_objects :=$(addprefix $(WORKDIR)/, $(omem_objects))
 pexe_objects :=$(addprefix $(WORKDIR)/, $(pexe_objects))
+
+tests:=$(addprefix $(WORKDIR)/, $(tests))
 
 
 cpp_objects:= $(pexe_objects)
@@ -92,7 +96,7 @@ c_objects  := $(flex_objects) $(omem_objects)
 
 .PHONEY: docs debug debug
 
-debug: $(cpp_objects) $(c_objects)
+debug: $(tests) $(flex_objects) $(pexe_objects)
 
 ################################# PRODUCTIONS ##################################
 
@@ -107,6 +111,9 @@ $(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WO
 $(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects)
+	chmod +x $@
 
 #$(omem_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headerdir)/%.h | $(WORKDIR)
 #	$(CC) $(CFLAGS) -c -fPIC -o $@ $<
