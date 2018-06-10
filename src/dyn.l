@@ -38,12 +38,11 @@ static inline void scan_error(const char * message){
 %option yylineno warn
 
 %x STRING
-%x CHAR
 
 DIGIT  [0-9]
 HEX    0[xX]({DIGIT}|[a-fA-F])+
 LETTER [A-Za-z_]
-NAME   $({DIGIT}|{LETTER})*
+NAME   ({DIGIT}|{LETTER})*
 WHTSPC [ \t\v]
 NL     (\r|\r\n|\n)
 ESCNL  ({WHTSPC})*\\{NL}({WHTSPC})*
@@ -73,25 +72,40 @@ NEWL   ({WHTSPC})*({NL})
 }
 
 
-<STRING,CHAR><<EOF>> {
+<STRING><<EOF>> {
 	msg_print(NULL, V_ERROR, 
 		"End of file encountered before closing quotation\n"
 	);
 }
 
-({WHTSPC})*#+\ .*{NEWL} { return T_NL; } // line comment
+ /******************************* COMMENTS ************************************/
 
+({WHTSPC})*#+.*{NEWL} { return T_NL; } // line comment
 
+ /*({WHTSPC})*#+.*{NEWL} {} // test*/
+
+ /******************************* OPERATORS ***********************************/
+
+\]   return T_CBRK;
+\[   return T_OBRK;
+\(   return T_OPAR;
+\)   return T_CPAR;
+
+:    return T_COLO;
+\<   return T_OTYPE;
+\>   return T_CTYPE;
+\{   return T_OBRC;
+\}   return T_CBRC;
 METHODS { return T_METH; }
+
+
 RETURN  { return T_RET; }
 
+ /************************** PRIMARY DATA TYPES *******************************/
 
+{NAME} return T_NAME;
 
 {HEX}|({DIGIT})+ return T_INT;
-
-\'               BEGIN(CHAR);
-<CHAR>(\\.|[^']) return T_CHAR; // an escaped anything \\. or a non-quote [^']
-<CHAR>\'         BEGIN(INITIAL);
 
 \"\" return T_STR; // the empty string
 
@@ -101,7 +115,7 @@ RETURN  { return T_RET; }
 
 
  /* This needs to be the last thing */
-<*>.|\n scan_error("unknown token");
+<*>.|\n msg_print(NULL, V_ERROR, "unknown token: %s\n", yytext);
 
 %%
 

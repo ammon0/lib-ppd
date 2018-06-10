@@ -7,7 +7,7 @@
 
 Class:Class{
 	<Class> superClass = Object
-	methodDictionary
+	<Dictionary>methodDictionary
 	instanceSpec
 	<Set<Class>> subClasses = nil
 	
@@ -16,7 +16,7 @@ Class:Class{
 	<String> name = "Class"
 	<String> comment = "All classes are instances of this Object."
 	
-}methods{
+METHODS
 	
 	%% # methods
 	

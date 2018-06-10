@@ -76,7 +76,7 @@ flex_objects:=dyn.l.o
 omem_objects:=object_mem.o
 pexe_objects:=string_table.o
 
-tests:=memtest
+tests:=testMemory testScanner
 
 
 # Prefix the object files
@@ -96,7 +96,7 @@ c_objects  := $(flex_objects) $(omem_objects)
 
 .PHONEY: docs debug debug
 
-debug: $(tests) $(flex_objects) $(pexe_objects)
+debug: $(tests) $(pexe_objects)
 
 ################################# PRODUCTIONS ##################################
 
@@ -111,12 +111,9 @@ $(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WO
 $(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects)
+$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects) $(flex_objects)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects) $(flex_objects)
 	chmod +x $@
-
-#$(omem_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headerdir)/%.h | $(WORKDIR)
-#	$(CC) $(CFLAGS) -c -fPIC -o $@ $<
 
 libppd.a: $(ppd_objects) $(mpl_objects) $(flex_objects)
 	ar rcs $@ $(ppd_objects) $(mpl_objects)

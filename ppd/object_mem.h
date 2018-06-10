@@ -15,7 +15,7 @@
 
 #include <util/types.h>
 
-typedef size_t Object_idx;
+//typedef size_t Object_idx;
 //typedef umax   Object_pt;
 typedef umax Object_pt;
 
@@ -29,15 +29,15 @@ Object_pt TypeOf(Object_pt object);
 /// Return the byte size of an object
 size_t SizeOf  (Object_pt object);
 /// Return the number of fields in an object
-Object_idx fieldCount(Object_pt object);
+size_t fieldCount(Object_pt object);
 
 
 // add more of these as necessary
-Object_pt FetchPointer(Object_pt target, Object_idx index);
-void      StorePointer(Object_pt target, Object_idx index, Object_pt value);
+Object_pt FetchPointer(Object_pt target, size_t index);
+void      StorePointer(Object_pt target, size_t index, Object_pt value);
 
-uint8_t FetchByte(Object_pt target, Object_idx index);
-void    StoreByte(Object_pt target, Object_idx index, uint8_t value);
+uint8_t FetchByte(Object_pt target, size_t index);
+void    StoreByte(Object_pt target, size_t index, uint8_t value);
 
 void IncRefsTo(Object_pt object);
 void DecRefsTo(Object_pt object);

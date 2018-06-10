@@ -13,18 +13,21 @@
 #include <ppd/object_mem.h>
 #include <util/msg.h>
 
+/*	There is a lot of testing I can't do without having some essential classes in the memory
+ */
+
 int main (void){
-	
 	Object_pt objects[20];
+	
 	
 	msg_set_verbosity(V_TRACE);
 	
 	msg_print(NULL,V_INFO, "memtest: start\n");
 	
-	msg_print(NULL, V_INFO, "sizeof(umax)       == %d\n", sizeof(umax)      );
-	msg_print(NULL, V_INFO, "sizeof(Object_idx) == %d\n", sizeof(Object_idx));
-	msg_print(NULL, V_INFO, "sizeof(Object_pt)  == %d\n", sizeof(Object_pt) );
-	msg_print(NULL, V_INFO, "sizeof(void*)      == %d\n", sizeof(void*)     );
+	msg_print(NULL, V_INFO, "sizeof(umax)      == %d\n", sizeof(umax)      );
+	msg_print(NULL, V_INFO, "sizeof(size_t)    == %d\n", sizeof(size_t)    );
+	msg_print(NULL, V_INFO, "sizeof(Object_pt) == %d\n", sizeof(Object_pt) );
+	msg_print(NULL, V_INFO, "sizeof(void*)     == %d\n", sizeof(void*)     );
 	
 	
 	initObjectMem();
