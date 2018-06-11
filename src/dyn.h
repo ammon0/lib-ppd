@@ -50,31 +50,49 @@ typedef enum{
 	T_CBRC,
 	T_OTYPE,
 	T_CTYPE,
-	
-	// directives
-	T_METH, // indicates begining of methods section
-	
-	// Bytecodes
-	
-	
-	T_ASS,
-	T_OP,
-	
 	T_OPAR,
 	T_CPAR,
+	T_IS,   // declares initial value
+	T_METH, // indicates begining of methods section
+	
+	
+	
+	// Bytecodes
 	T_OBRK,
 	T_CBRK,
 	
 	T_DOT,
 	T_COMA,
 	
-	T_QUES,
 	
+	// arithmetic instructions
+	T_ADD,
+	T_SUB,
+	T_MUL,
+	T_DIV,
+	T_MOD,
+	T_LSH,
+	T_RSH,
+	T_SHA,
+	T_ROL,
+	T_ROR,
 	
+	T_AND,
+	T_OR,
+	T_NOT,
+	T_LT,
+	T_GT,
+	T_LTE,
+	T_GTE,
+	T_EQ,
+	T_NEQ,
 	
+	// special instructions
+	T_CLSS,
 	
-	// instructions
-	
+	T_PUSH,
+	T_POP,
+	T_SEND,
 	T_RET,
 	NUM_TOKENS
 } token_t;
@@ -90,13 +108,49 @@ EXTERN const char * token_dex[NUM_TOKENS]
 #ifdef _DYN_L
 	= {
 		// Formatting
-		"EOF", "NL",
+		"EOF ",
+		"NL  ",
 		// Primary
-		"Integer", "String", "Name",
-		":", "{", "}", "<", ">",
-		"(", ")", "[", "]", 
-		".", ",", ":", "?",
-		"METHOD", "RETURN"
+		"INT ",
+		"STR ",
+		"NAME",
+		":   ",
+		"{   ",
+		"}   ",
+		"<   ",
+		">   ",
+		"(   ",
+		")   ",
+		"IS  ",
+		"METHOD",
+		"[   ",
+		"]   ",
+		".   ",
+		",   ",
+		"ADD ",
+		"SUB ",
+		"MUL ",
+		"DIV ",
+		"MOD ",
+		"SL  ",
+		"SR  ",
+		"SRS ",
+		"ROL ",
+		"ROR ",
+		"AND ",
+		"OR  ",
+		"NOT ",
+		"LT  ",
+		"GT  ",
+		"LTE ",
+		"GTE ",
+		"EQ  ",
+		"NEQ ",
+		"CLASS",
+		"PUSH ",
+		"POP  ",
+		"SEND ",
+		"RETURN"
 	}
 #endif // _GLOBALS_C
 ;

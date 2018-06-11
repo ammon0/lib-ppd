@@ -40,11 +40,15 @@ static inline void scan_error(const char * message){
 %x STRING
 
 DIGIT  [0-9]
-HEX    0[xX]({DIGIT}|[a-fA-F])+
 LETTER [A-Za-z_]
-NAME   ({DIGIT}|{LETTER})*
 WHTSPC [ \t\v]
 NL     (\r|\r\n|\n)
+OP     [!@$%^&*/\-+=<>|~?]
+
+HEX    0[xX]({DIGIT}|[a-fA-F])+
+
+NAME   {LETTER}({DIGIT}|{LETTER})*
+
 ESCNL  ({WHTSPC})*\\{NL}({WHTSPC})*
 
 NEWL   ({WHTSPC})*({NL})
@@ -80,34 +84,66 @@ NEWL   ({WHTSPC})*({NL})
 
  /******************************* COMMENTS ************************************/
 
-({WHTSPC})*#+.*{NEWL} { return T_NL; } // line comment
+#.*$ {} // line comment
 
- /*({WHTSPC})*#+.*{NEWL} {} // test*/
-
- /******************************* OPERATORS ***********************************/
-
-\]   return T_CBRK;
-\[   return T_OBRK;
-\(   return T_OPAR;
-\)   return T_CPAR;
+ /******************************* DECLARATIONS ********************************/
 
 :    return T_COLO;
 \<   return T_OTYPE;
 \>   return T_CTYPE;
 \{   return T_OBRC;
 \}   return T_CBRC;
-METHODS { return T_METH; }
+\(   return T_OPAR;
+\)   return T_CPAR;
 
 
-RETURN  { return T_RET; }
+IS      return T_IS;
+METHODS return T_METH;
+
+ /******************************* INSTRUCTIONS ********************************/
+
+ /* arithmetic instructions */
+ADD return T_ADD;
+SUB return T_SUB;
+MUL return T_MUL;
+DIV return T_DIV;
+MOD return T_MOD;
+SL  return T_LSH;
+SR  return T_RSH;
+SRS return T_SHA;
+ROL return T_ROL;
+ROR return T_ROR;
+
+AND return T_AND;
+OR  return T_OR;
+NOT return T_NOT;
+
+LT  return T_LT;
+GT  return T_GT;
+LTE return T_LTE;
+GTE return T_GTE;
+EQ  return T_EQ;
+NEQ return T_NEQ;
+
+ /* special instructions */
+CLASS return T_CLSS;
+
+
+PUSH   return T_PUSH;
+POP    return T_POP;
+SEND   return T_SEND;
+RETURN return T_RET;
 
  /************************** PRIMARY DATA TYPES *******************************/
 
 {NAME} return T_NAME;
+({OP})+ return T_NAME; // definable operations
 
-{HEX}|({DIGIT})+ return T_INT;
+{HEX}      return T_INT;
 
-\"\" return T_STR; // the empty string
+({DIGIT})+ return T_INT;
+
+\"\" return T_STR; // the empty string FIXME
 
 \"                   BEGIN(STRING);
 <STRING>(\\\"|[^"])* return T_STR; // escaped quotes and non-quotes
@@ -118,5 +154,53 @@ RETURN  { return T_RET; }
 <*>.|\n msg_print(NULL, V_ERROR, "unknown token: %s\n", yytext);
 
 %%
+
+
+
+
+//static umax read_num(const char * str) {
+//	umax num=0;
+//	const uint hexmax=16;
+//	const uint decmax=19;
+//	
+//	/*umax can hold up to UMAX_MAX
+//	2^64 = 10^x -> log_10 2^64 = x -> x=19.2659...
+//	2^64 = 16^y -> log_16 2^64 = y -> y=16
+//	*/
+//	
+//	// TODO: allow spaces in numbers
+//	
+//	// hex number
+//	if(str[1] == 'x' || str[1] == 'X'){ 
+//		if(yyleng > hexmax +2){ // overflow
+//			msg_print(NULL, V_ERROR, "Number is too large");
+//			return UMAX_MAX;
+//		}
+//		
+//		for(uint i=2; i< yyleng; i++){
+//			if (str[i]>= '0' && str[i]<='9')
+//				num = (num << 4) | (str[i] - '0');
+//			else if(str[i]>= 'A' && str[i]<='F')
+//				num = (num << 4) | (str[i] - 'A' + 10);
+//			else if(str[i]>= 'a' && str[i]<='f')
+//				num = (num << 4) | (str[i] - 'a' + 10);
+//			else msg_print(NULL, V_ERROR, "Internal: read_num(): hex");
+//		}
+//	}
+//	
+//	// decimal number
+//	else {
+//		if(yyleng > decmax){ // overflow
+//			msg_print(NULL, V_ERROR, "Number is too large");
+//			return UMAX_MAX;
+//		}
+//		
+//		for(uint i=0; i< yyleng; i++){
+//			num = (num * 10) + (str[i] - '0');
+//		}
+//	}
+//	
+//	return num;
+//}
 
 
