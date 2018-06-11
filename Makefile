@@ -54,7 +54,7 @@ DEBUG_OPT:=
 
 CFLAGS:=  --std=c11   -g $(CWARNINGS)   -I./ -I$(INCDIR) -L$(LIBDIR)/util
 CXXFLAGS:=--std=c++14 -g $(CXXWARNINGS) -I./ -I$(INCDIR) -L$(LIBDIR)
-LFLAGS:=-d
+LFLAGS:=#-d
 LEX:= flex
 
 
@@ -94,7 +94,7 @@ c_objects  := $(flex_objects) $(omem_objects)
 ################################### TARGETS ####################################
 
 
-.PHONEY: docs debug debug
+.PHONEY: docs debug
 
 debug: $(tests) $(pexe_objects)
 
@@ -133,7 +133,7 @@ install: $(headers) libppd.a
 ################################## UTILITIES ###################################
 
 
-cleanfiles:=*.a *.o
+cleanfiles:=*.a *.o src/dyn.l.c
 
 .PHONEY: clean todolist count veryclean
 
