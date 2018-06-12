@@ -171,15 +171,19 @@ static void instructions(void){
 }
 
 
-static void fieldInit(void){
-	match_token(T_IS);
-	
+static void initList(void){
 	if(token == T_OBRC){
 		getNext();
-		while(token==T_NAME) getNext(); // list initializer
+		while(token!=T_CBRC) initList(); // list initializer
 		match_token(T_CBRC);
-	}else if(token == T_STR) getNext(); // string initializer
+	}
+	else if(token == T_STR) getNext(); // string initializer
 	else match_token(T_NAME); // name initializer
+}
+
+static void fieldInit(void){
+	match_token(T_IS);
+	initList();
 }
 
 static void staticType(void){
@@ -201,6 +205,10 @@ static void argList(void){
 	match_token(T_OPAR);
 	
 	while(token != T_CPAR){
+		if(token==T_NL){
+			getNext();
+			continue;
+		}
 		if(token==T_OPAR) staticType();
 		match_token(T_NAME);
 	}

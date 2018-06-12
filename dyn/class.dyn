@@ -6,114 +6,132 @@
 
 
 Class:Class{
-	<Class> superClass = Object
-	<Dictionary>methodDictionary
+	(Class) superClass IS Object
+	(Dictionary)methodDictionary
 	instanceSpec
-	<Set<Class>> subClasses = nil
+	(Set(Class)) subClasses IS nil
 	
-	<Array> instanceVariables = {"superClass", "methodDictionary", "instanceSpec", "subClasses", "instanceVariables", "name", "comment"}
+	(Array) instanceVariables IS {"superClass" "methodDictionary" "instanceSpec" "subClasses" "instanceVariables" "name" "comment"}
 	
-	<String> name = "Class"
-	<String> comment = "All classes are instances of this Object."
+	(String) name IS "Class"
+	(String) comment IS "All classes are instances of this Object."
 	
 METHODS
-	
-	%% # methods
 	
 	############################### ACCESSORS ################################
 	
 	# Acessing methods and selectors #
 	
-	<Set> selectors ()
+	(Set) selectors () {
+		
+	}
 	
-	<Set> allSelectors ()
+	(Set) allSelectors () {
+		
+	}
 	
-	<CompiledMethod> compiledMethodAt(selector)
+	(CompiledMethod) compiledMethodAt(selector){
+		
+	}
 	
-	<String> sourceCodeAt(selector)
+	(String) sourceCodeAt(selector){
+		
+	}
 	
 	# Accessing instances and variables #
 	
-	<Set> allInstances ()
+	(Set) allInstances (){
+		
+	}
 	
 	# an existing instance of receiver
-	someInstance {}
+	someInstance () {}
 	
-	<Integer> instanceCount ()
+	(Integer) instanceCount () {
+		
+	}
 	
-	<Array> instVarNames {}
+	(Array) instVarNames() {}
 	
-	<Set> subclassInstVarNames {}
+	(Set) subclassInstVarNames() {}
 	
-	<Array> allInstVarNames {}
+	(Array) allInstVarNames() {}
 	
-	<Set> classVarNames {}
+	(Set) classVarNames() {}
 	
-	<Set> allClassVarNames {}
+	(Set) allClassVarNames() {}
 	
 	# Accessing the Class Hierarchy #
 	
-	<Set> allSubclasses {}
+	(Set) allSubclasses() {}
 	
-	<Set> withAllSubclasses {}
+	(Set) withAllSubclasses() {}
 	
-	<OrderedCollection> allSuperclasses {}
+	(OrderedCollection) allSuperclasses() {}
 	
 	################################ CREATING ################################
 	
 	# Method Dictionary #
 	
-	<> addSelector(selector, <compiledMethod> compiledMethod){}
+	() addSelector(selector (compiledMethod) compiledMethod){}
 	
-	<> removeSelector (selector){}
+	() removeSelector (selector){}
 	
-	<compiledMethod> compile (<String> code){}
+	(compiledMethod) compile ((String) code){}
 	
-	<compiledMethod> compile(<String> code, requestor){}
+	(compiledMethod) compile((String) code requestor){}
 	
-	<> recompile (selector)
+	() recompile (selector){}
 	
-	decompile (selector)
+	decompile (selector){}
 	
-	<> compileAll
+	() compileAll(){
+		
+	}
 	
-	<> compileAllSubclasses
+	() compileAllSubclasses(){
+		
+	}
 	
 	# Creating Instances #
 	
-	<Object> new {}
+	(Object) new() {}
 	
-	<Object> basicNew {}
+	(Object) basicNew() {}
 	
-	<Object> new (<Integer> anInteger){}
+	(Object) new ((Integer) anInteger){}
 	
-	<Object> basicNew (<Integer> anInteger){}
+	(Object) basicNew ((Integer) anInteger){}
 	
 	# Creating a Class Hierarchy #
 	
-	<> addSubclass (<Class> aClass){}
+	() addSubclass ((Class) aClass){}
 	
-	<> removeSubclass (<Class> aClass){}
+	() removeSubclass ((Class) aClass){}
 	
-	addInstVar {<String> aString}
+	addInstVar ((String) aString){}
 	
-	removeInstVar {<String> aString}
-	
-	
-	initialize
+	removeInstVar ((String) aString){}
 	
 	
-	makeSubclass {
-		<String>name,
-		<String> instanceVariableNames,
-		<String> classVariableNames
+	initialize(){}
+	
+	
+	makeSubclass (
+		(String)name
+		(String) instanceVariableNames
+		(String) classVariableNames
+	){
+		
 	}
 	
-	makeVariableSubclass {
-		<String>name,
-		<String> instanceVariableNames,
-		<String> classVariableNames,
-		<Integer> count
+	makeVariableSubclass (
+		(String)name
+		(String) instanceVariableNames
+		(String) classVariableNames
+		(Integer) count
+	){
+		
 	}
 	
 	
@@ -121,62 +139,72 @@ METHODS
 	
 	# Testing the contents of the method dictionary #
 	
-	<Bool> hasMethods
+	(Bool) hasMethods(){
+		
+	}
 	
-	<Bool> includesSelector {selector}
+	(Bool) includesSelector (selector){
+		
+	}
 	
-	<Bool> canUnderstand {selector}
+	(Bool) canUnderstand (selector){
+		
+	}
 	
-	<ClassDescription> whichClassIncludesSelector {selector}
+	(ClassDescription) whichClassIncludesSelector (selector){
+		
+	}
 	
-	<Set> whichSelectorsAccess {instVarName}
+	(Set) whichSelectorsAccess (instVarName){
+		
+	}
 	
-	<Set> whichSelectorsReferTo {<Object>anObject}
+	(Set) whichSelectorsReferTo ((Object)anObject){}
 	
-	<Bool> scopeHas {name}
+	(Bool) scopeHas (name){}
 	
 	# Testing the form of the instances #
 	
-	<Bool> isBytes
+	(Bool) isBytes(){}
 	
-	<Bool> isFixed
+	(Bool) isFixed(){}
 	
-	<Bool> isVariable
+	(Bool) isVariable(){}
 	
-	<Integer> instSize
+	(Integer) instSize(){}
 	
 	# etc
 	
 	# Testing the class hierachy #
 	
-	<Bool> inheritsFrom {<Class> aClass}
+	(Bool) inheritsFrom ((Class) aClass) {}
 	
-	kindOfSubclass
+	kindOfSubclass(){}
 	
 	############################## ENUMERATING ###############################
 	
-	allSubclassesDo {<Block> aBlock}
+	allSubclassesDo ((Block) aBlock){}
 	
-	allSuperclassesDo {<Block> aBlock}
+	allSuperclassesDo ((Block) aBlock){}
 	
-	allInstancesDo {<Block> aBlock}
+	allInstancesDo ((Block) aBlock){}
 	
-	allSubinstancesDo {<Block> aBlock}
+	allSubinstancesDo ((Block) aBlock){}
 	
-	<Set> selectSubclasses {<Block> aBlock}
+	(Set) selectSubclasses ((Block) aBlock){}
 	
-	<Set> selectSuperclasses {<Block> aBlock}
+	(Set) selectSuperclasses ((Block) aBlock){}
 	
-	<String> classVariableString
+	(String) classVariableString(){}
 	
-	<String> instanceVariableString
+	(String) instanceVariableString(){}
 	
-	<String> sharedVariableString
+	(String) sharedVariableString(){}
 	
 	
 	# Serializing #
 	
-	fileOutOn {aFileStream}
+	fileOutOn (aFileStream){}
 	
 	
 	
