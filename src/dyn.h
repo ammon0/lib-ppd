@@ -64,6 +64,8 @@ typedef enum{
 	T_DOT,
 	T_COMA,
 	
+	// send instructions
+	T_SEND,
 	
 	// arithmetic instructions
 	T_ADD,
@@ -89,11 +91,25 @@ typedef enum{
 	
 	// special instructions
 	T_CLSS,
+	T_CPY,
 	
+	// stack instructions
 	T_PUSH,
+	T_PUSHR,
+	T_PUSHT,
 	T_POP,
-	T_SEND,
-	T_RET,
+	
+	// jump instructions
+	T_JMP,
+	T_JT,
+	T_JF,
+	
+	// return instructions
+	T_RETS,
+	T_RETR,
+	T_RETT,
+	T_RETF,
+	T_RETN,
 	NUM_TOKENS
 } token_t;
 
@@ -108,49 +124,66 @@ EXTERN const char * token_dex[NUM_TOKENS]
 #ifdef _DYN_L
 	= {
 		// Formatting
-		"EOF ",
-		"NL  ",
+		"EOF  ",
+		"NL   ",
 		// Primary
-		"INT ",
-		"STR ",
-		"NAME",
-		":   ",
-		"{   ",
-		"}   ",
-		"<   ",
-		">   ",
-		"(   ",
-		")   ",
-		"IS  ",
+		"INT  ",
+		"STR  ",
+		"NAME ",
+		":    ",
+		"{    ",
+		"}    ",
+		"<    ",
+		">    ",
+		"(    ",
+		")    ",
+		"IS   ",
 		"METHOD",
-		"[   ",
-		"]   ",
-		".   ",
-		",   ",
-		"ADD ",
-		"SUB ",
-		"MUL ",
-		"DIV ",
-		"MOD ",
-		"SL  ",
-		"SR  ",
-		"SRS ",
-		"ROL ",
-		"ROR ",
-		"AND ",
-		"OR  ",
-		"NOT ",
-		"LT  ",
-		"GT  ",
-		"LTE ",
-		"GTE ",
-		"EQ  ",
-		"NEQ ",
-		"CLASS",
-		"PUSH ",
-		"POP  ",
+		
+		"[    ",
+		"]    ",
+		".    ",
+		",    ",
+		
 		"SEND ",
-		"RETURN"
+		"ADD  ",
+		"SUB  ",
+		"MUL  ",
+		"DIV  ",
+		"MOD  ",
+		"SL   ",
+		"SR   ",
+		"SRS  ",
+		"ROL  ",
+		"ROR  ",
+		
+		"AND  ",
+		"OR   ",
+		"NOT  ",
+		"LT   ",
+		"GT   ",
+		"LTE  ",
+		"GTE  ",
+		"EQ   ",
+		"NEQ  ",
+		
+		"CLASS",
+		"COPY ",
+		
+		"PUSH ",
+		"PUSH RECVR",
+		"PUSH TEMP",
+		"POP  ",
+		
+		"JMP  ",
+		"JMP ifT",
+		"JMP ifF",
+		
+		"RET STACK",
+		"RET RECVR",
+		"RET TRUE ",
+		"RET FALSE",
+		"RET NULL "
 	}
 #endif // _GLOBALS_C
 ;

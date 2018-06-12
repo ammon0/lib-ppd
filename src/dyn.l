@@ -127,12 +127,23 @@ NEQ return T_NEQ;
 
  /* special instructions */
 CLASS return T_CLSS;
+COPY  return T_CPY;
 
 
-PUSH   return T_PUSH;
-POP    return T_POP;
-SEND   return T_SEND;
-RETURN return T_RET;
+PUSH  return T_PUSH;
+PUSHR return T_PUSHR;
+PUSHT return T_PUSHT;
+
+POP  return T_POP;
+SEND return T_SEND;
+
+RETS return T_RETS;
+RETR return T_RETR;
+RETT return T_RETT;
+RETF return T_RETF;
+RETN return T_RETN;
+
+ /************************** PRIMARY DATA TYPES *******************************/
 
  /************************** PRIMARY DATA TYPES *******************************/
 

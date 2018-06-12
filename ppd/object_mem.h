@@ -45,6 +45,7 @@ void DecRefsTo(Object_pt object);
 
 
 Object_pt NewObject(Object_pt clss, umax fields, size_t fieldSize);
+Object_pt CopyObjecet(Object_pt object);
 
 Object_pt FirstInst(Object_pt class_object);
 Object_pt NextInst (Object_pt object);
