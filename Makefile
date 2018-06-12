@@ -35,7 +35,7 @@ CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wwrite-strings \
 	-Wdisabled-optimization \
 	-Wpadded \
-	-Wconversion #-Werror=implicit-function-declaration -Wc++-compat
+	-Wconversion # -Wc++-compat
 
 CXXWARNINGS:=-Wall -Wextra -pedantic \
 	-Wmissing-declarations -Werror=implicit-function-declaration \
@@ -113,9 +113,6 @@ $(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WO
 $(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-#$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects) $(flex_objects) $(parse_objects)
-#	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects) $(flex_objects)
-#	chmod +x $@
 
 testMemory: $(srcdir)/testMemory.c $(omem_objects)
 	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects)

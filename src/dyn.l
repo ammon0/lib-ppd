@@ -34,10 +34,12 @@ static inline void scan_error(const char * message){
 
 /* keep track of the line number in yylineno
  turn on warnings
+ have a start condition stack
  */
-%option yylineno warn
+%option yylineno warn 
 
 %x STRING
+/*%s METHODS */
 
 DIGIT  [0-9]
 LETTER [A-Za-z_]
@@ -89,8 +91,8 @@ NEWL   ({WHTSPC})*({NL})
  /******************************* DECLARATIONS ********************************/
 
 :    return T_COLO;
-\<   return T_OTYPE;
-\>   return T_CTYPE;
+	/*\<   return T_OTYPE;
+	\>   return T_CTYPE; */
 \{   return T_OBRC;
 \}   return T_CBRC;
 \(   return T_OPAR;
@@ -98,7 +100,10 @@ NEWL   ({WHTSPC})*({NL})
 
 
 IS      return T_IS;
-METHODS return T_METH;
+METHODS {
+	//BEGIN(METHODS);
+	return T_METH;
+}
 
  /******************************* INSTRUCTIONS ********************************/
 

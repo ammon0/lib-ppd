@@ -8,88 +8,88 @@
 # an instance of Class called Object
 # being the root of the superClass tree, Object has no superClass
 Class:Object{
-	<Class> superClass IS nil
+	(Class) superClass IS nil
 	methodDictionary
 	instanceSpec
-	<Set<Class>>subClasses IS {Class Magnitude Collection}
-	<String> instanceVariables IS nil # no guaranteed fields in all objects
-	<String> name IS "Object"
-	<String> comment IS ""
+	(Set(Class))subClasses IS {Class Magnitude Collection}
+	(String) instanceVariables IS nil # no guaranteed fields in all objects
+	(String) name IS "Object"
+	(String) comment IS ""
 	
 	
 METHODS
 	
 	# error handling
 	#error: aString
-	<> doesNotUnderstand (aMessage){
+	() doesNotUnderstand (aMessage){
 		
 	}
 	
-	<> primativeFailed(){
+	() primativeFailed(){
 		
 	}
 	
-	<> subclassResponsibility(){
+	() subclassResponsibility(){
 		
 	}
 	
-	<> shouldNotImplement(){
+	() shouldNotImplement(){
 		
 	}
 	
 	########################### TEST FUNCTIONALITY #############################
 	
-	<Class> class () {
+	(Class) class () {
 		CLASS # put this object's class pointer on top of the stack
 		RETS  # return the stack top
 	}
 	
-	<Bool> isKindOf  (<Class>aClass) {}
-	<Bool> isMemberOf(<Class>aClass) {}
-	<Bool> respondsTo(<Symbol>aSymbol) {}
+	(Bool) isKindOf  ((Class)aClass) {}
+	(Bool) isMemberOf((Class)aClass) {}
+	(Bool) respondsTo((Symbol)aSymbol) {}
 	
 	############################### COMPARE TO #################################
 	
-	<Bool> == (<Object> anObject){  # identity
+	(Bool) == ((Object) anObject){  # identity
 		PUSHR   # push self
 		PUSHT 0 # push the first argument
 		EQ      # test for equality of the pointers
 		RETS
 	}
 	
-	<Bool> = (<Object> anObject){  # equivalency
+	(Bool) = ((Object) anObject){  # equivalency
 		# first test if we are the same or equivalent class
 		# test if we are the same length
 		# iterate over each field and test equality
 	}
 	
-	hash
+	hash () {}
 	
 	################################# COPYING ##################################
 	
-	<Object> shallowCopy (){
+	(Object) shallowCopy (){
 		COPY # create a shallow copy
 		RETS # return it
 	}
 	
-	<Object> deepCopy (){
+	(Object) deepCopy (){
 		# do a shallow copy first
 		# recursively do a deep copy of each field
 	}
 	
 	# accessing
-	<Object> getIndex (index){ # all objects are just arrays
+	(Object) getIndex (index){ # all objects are just arrays
 		
 	}
-	<Object> setIndex (index value){
+	(Object) setIndex (index value){
 		
 	}
-	<uint> size (){
+	(uint) size (){
 		
 	}
 	
 	# printing
-	<String> toString
+	(String) toString() {}
 }
 
 
