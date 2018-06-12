@@ -25,49 +25,69 @@ METHODS
 		
 	}
 	
-	primativeFailed
-	subclassResponsibility
-	shouldNotImplement
-
-	# functionality
-	<Class> class () {
-		RETURN CLASS
-	}
-	
-	<Bool> isKindOf (<Class>aClass) {}
-	isMemberOf  (<Class>aClass) {}
-	respondsTo: aSymbol
-
-	# comparison
-	== anObject # identity
-	= anObject  # equivalency
-	hash
-
-	#<Bool> isNil
-	#<Bool> notNil	can just use equality
-
-	# copying
-	<Object> shallowCopy (){
-		# get the size of the object if necessary
-		# get the class of the object
+	<> primativeFailed(){
 		
 	}
+	
+	<> subclassResponsibility(){
+		
+	}
+	
+	<> shouldNotImplement(){
+		
+	}
+	
+	########################### TEST FUNCTIONALITY #############################
+	
+	<Class> class () {
+		CLASS # put this object's class pointer on top of the stack
+		RETS  # return the stack top
+	}
+	
+	<Bool> isKindOf  (<Class>aClass) {}
+	<Bool> isMemberOf(<Class>aClass) {}
+	<Bool> respondsTo(<Symbol>aSymbol) {}
+	
+	############################### COMPARE TO #################################
+	
+	<Bool> == (<Object> anObject){  # identity
+		PUSHR   # push self
+		PUSHT 0 # push the first argument
+		EQ      # test for equality of the pointers
+		RETS
+	}
+	
+	<Bool> = (<Object> anObject){  # equivalency
+		# first test if we are the same or equivalent class
+		# test if we are the same length
+		# iterate over each field and test equality
+	}
+	
+	hash
+	
+	################################# COPYING ##################################
+	
+	<Object> shallowCopy (){
+		COPY # create a shallow copy
+		RETS # return it
+	}
+	
 	<Object> deepCopy (){
 		# do a shallow copy first
 		# recursively do a deep copy of each field
 	}
-
+	
 	# accessing
 	<Object> getIndex (index){ # all objects are just arrays
 		
-	} 
+	}
 	<Object> setIndex (index value){
 		
 	}
 	<uint> size (){
 		
 	}
-
+	
 	# printing
 	<String> toString
 }

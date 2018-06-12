@@ -145,8 +145,6 @@ RETN return T_RETN;
 
  /************************** PRIMARY DATA TYPES *******************************/
 
- /************************** PRIMARY DATA TYPES *******************************/
-
 {NAME} return T_NAME;
 ({OP})+ return T_NAME; // definable operations
 

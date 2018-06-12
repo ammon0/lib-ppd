@@ -26,7 +26,6 @@ the rest of the scanner.
 
 
 #include <util/types.h>
-
 #include <stdio.h>
 
 
@@ -215,6 +214,8 @@ EXTERN const char * token_dex[NUM_TOKENS]
 
 #define YY_DECL token_t yylex(void)
 token_t yylex(void);
+
+void objectParser(void);
 
 #ifdef __cplusplus
 	}

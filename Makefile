@@ -72,23 +72,25 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp) $(wildcard $(srcdir)/*.h)
 allfiles:= $(headers) $(cpp_sources) $(c_sources) $(prv_headers)
 
 # Object files
-flex_objects:=dyn.l.o
-omem_objects:=object_mem.o
-pexe_objects:=string_table.o
+flex_objects :=dyn.l.o
+omem_objects :=object_mem.o
+pexe_objects :=string_table.o
+parse_objects:=dynParser.o
 
-tests:=testMemory testScanner
+tests:=testMemory testScanner testParser
 
 
 # Prefix the object files
-flex_objects :=$(addprefix $(WORKDIR)/, $(flex_objects))
-omem_objects :=$(addprefix $(WORKDIR)/, $(omem_objects))
-pexe_objects :=$(addprefix $(WORKDIR)/, $(pexe_objects))
+flex_objects  :=$(addprefix $(WORKDIR)/, $(flex_objects))
+omem_objects  :=$(addprefix $(WORKDIR)/, $(omem_objects))
+pexe_objects  :=$(addprefix $(WORKDIR)/, $(pexe_objects))
+parse_objects :=$(addprefix $(WORKDIR)/, $(parse_objects))
 
-tests:=$(addprefix $(WORKDIR)/, $(tests))
+#tests:=$(addprefix $(WORKDIR)/, $(tests))
 
 
 cpp_objects:= $(pexe_objects)
-c_objects  := $(flex_objects) $(omem_objects)
+c_objects  := $(flex_objects) $(omem_objects) $(parse_objects)
 
 
 ################################### TARGETS ####################################
@@ -111,8 +113,20 @@ $(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WO
 $(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects) $(flex_objects)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects) $(flex_objects)
+#$(tests): $(WORKDIR)/%: $(srcdir)/%.c | $(omem_objects) $(flex_objects) $(parse_objects)
+#	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects) $(flex_objects)
+#	chmod +x $@
+
+testMemory: $(srcdir)/testMemory.c $(omem_objects)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects)
+	chmod +x $@
+
+testScanner: $(srcdir)/testScanner.c $(flex_objects)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_objects)
+	chmod +x $@
+
+testParser:$(srcdir)/testParser.c $(parse_objects)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_objects) $(flex_objects)
 	chmod +x $@
 
 libppd.a: $(ppd_objects) $(mpl_objects) $(flex_objects)
@@ -133,7 +147,7 @@ install: $(headers) libppd.a
 ################################## UTILITIES ###################################
 
 
-cleanfiles:=*.a *.o src/dyn.l.c
+cleanfiles:=*.a *.o src/dyn.l.c $(tests)
 
 .PHONEY: clean todolist count veryclean
 
