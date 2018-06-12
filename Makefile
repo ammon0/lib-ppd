@@ -96,7 +96,7 @@ c_objects  := $(flex_objects) $(omem_objects) $(parse_objects)
 ################################### TARGETS ####################################
 
 
-.PHONEY: docs debug
+.PHONEY: docs debug install
 
 debug: $(tests) $(pexe_objects)
 
