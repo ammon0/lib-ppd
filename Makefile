@@ -26,7 +26,7 @@ CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wredundant-decls  -Wnested-externs \
 	-Wshadow -Wbad-function-cast \
 	-Wcast-align \
-	-Wdeclaration-after-statement -Werror=uninitialized \
+	-Wdeclaration-after-statement \
 	-Winline \
 	-Wswitch-default -Wswitch-enum \
 	-Wsuggest-attribute=pure -Wsuggest-attribute=const \
@@ -38,17 +38,18 @@ CWARNINGS:=-Wall -Wextra -pedantic \
 	-Wconversion # -Wc++-compat
 
 CXXWARNINGS:=-Wall -Wextra -pedantic \
-	-Wmissing-declarations -Werror=implicit-function-declaration \
+	-Wmissing-declarations \
 	-Wredundant-decls -Wshadow \
 	-Wpointer-arith -Wcast-align \
-	-Wuninitialized -Wmaybe-uninitialized -Werror=uninitialized \
+	-Wuninitialized -Wmaybe-uninitialized \
 	-Winline -Wno-long-long \
 	-Wsuggest-attribute=pure -Wsuggest-attribute=const \
 	-Wsuggest-attribute=noreturn -Wsuggest-attribute=format \
 	-Wtrampolines -Wstack-protector \
 	-Wwrite-strings \
-	-Wconversion -Wdisabled-optimization -Wno-switch \
-	-Wswitch -Wswitch-default -Wswitch-enum
+	-Wdisabled-optimization -Wno-switch \
+	-Wswitch -Wswitch-default -Wswitch-enum \
+	#-Wconversion
 
 DEBUG_OPT:=
 
@@ -74,7 +75,7 @@ allfiles:= $(headers) $(cpp_sources) $(c_sources) $(prv_headers)
 # Object files
 flex_objects :=dyn.l.o
 omem_objects :=object_mem.o
-pexe_objects :=string_table.o
+pexe_objects :=string_table.o gen-pexe.o
 parse_objects:=dynParser.o
 
 tests:=testMemory testScanner testParser

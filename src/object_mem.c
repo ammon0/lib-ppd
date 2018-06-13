@@ -22,20 +22,17 @@
 
 typedef enum{
 	pc_r=0,
-//	pc_u64,
 	pc_u32,
 	pc_u16,
 	pc_u8,
 	pc_uint,
 	pc_umax,
-//	pc_s64,
 	pc_s32,
 	pc_s16,
 	pc_s8,
 	pc_sint,
 	pc_smax,
-	pc_f32,
-//	pc_f64
+	pc_f32
 } PrimativeType;
 
 #define VAL_BIT_W ((sizeof(umax)-1)*8)
@@ -66,12 +63,6 @@ typedef struct Object{
 	Object_pt type    ; // the class of the object
 	Object_pt fields[]; // the object's data
 } Object;
-
-//typedef struct Object_byte{
-//	size_t size; // field count
-//	Object_pt  clss;
-//	uint8_t    fields[];
-//} Object_byte;
 
 typedef struct Object_table_entry{
 	Object *location;

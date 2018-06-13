@@ -13,6 +13,8 @@
 #ifndef PEXE_HPP
 #define PEXE_HPP
 
+#include <util/types.h>
+//#include <stdio.h>
 
 /******************************************************************************/
 //                   FUNCTIONS FOR MANIPULATING PEXE FILES
@@ -21,11 +23,11 @@
 
 /**	Load a pexe file into object memory
 */
-void LoadPEXE(FILE * pexe_file);
+void LoadPEXE(const char * pexe_file);
 
 /**	Generate a PEXE file from the object memory
 */
-return_t GenPEXE(FILE * pexe_file);
+return_t GenPEXE(const char * pexe_file);
 
 
 #endif // PEXE_HPP

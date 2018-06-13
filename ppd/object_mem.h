@@ -15,11 +15,9 @@
 
 #include <util/types.h>
 
-//typedef size_t Object_idx;
-//typedef umax   Object_pt;
+
 typedef umax Object_pt;
 
-//typedef umax Object_pt;
 static const Object_pt null =0;
 
 void initObjectMem(void);
