@@ -14,15 +14,15 @@
 #include <util/msg.h>
 #include <elfio/elfio.hpp>
 
-using namespace ELFIO;
+//using namespace ELFIO;
 
 
 /**	Create a Portable Executable file from the object memory
 	Takes the output file name as a parameter. stack or register based VM?
  */
 return_t GenPEXE(const char * pexe_file){
-	elfio writer;
-	section *Strings, *Methods, *Objects;
+	ELFIO::elfio writer;
+	ELFIO::section *Strings, *Methods, *Objects, *Symbols;
 	
 	msg_print(NULL, V_TRACE, "GenPEXE(): start\n");
 	

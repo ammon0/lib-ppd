@@ -49,7 +49,7 @@ CXXWARNINGS:=-Wall -Wextra -pedantic \
 	-Wwrite-strings \
 	-Wdisabled-optimization -Wno-switch \
 	-Wswitch -Wswitch-default -Wswitch-enum \
-	#-Wconversion
+	-Wconversion
 
 DEBUG_OPT:=
 
@@ -127,8 +127,8 @@ testParser:$(srcdir)/testParser.c $(parse_objects)
 	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_objects) $(flex_objects)
 	chmod +x $@
 
-libppd.a: $(ppd_objects) $(mpl_objects) $(flex_objects)
-	ar rcs $@ $(ppd_objects) $(mpl_objects)
+libppd.a: $(cpp_objects) $(c_objects)
+	ar rcs $@ $(cpp_objects) $(c_objects)
 
 $(srcdir)/dyn.l.c: $(srcdir)/dyn.l
 	$(LEX) $(LFLAGS) -o $@ $<
