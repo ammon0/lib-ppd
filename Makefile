@@ -49,7 +49,7 @@ CXXWARNINGS:=-Wall -Wextra -pedantic \
 	-Wwrite-strings \
 	-Wdisabled-optimization -Wno-switch \
 	-Wswitch -Wswitch-default -Wswitch-enum \
-	-Wconversion
+	#-Wconversion
 
 DEBUG_OPT:=
 
@@ -91,7 +91,7 @@ parse_objects :=$(addprefix $(WORKDIR)/, $(parse_objects))
 
 
 cpp_objects:= $(pexe_objects)
-c_objects  := $(flex_objects) $(omem_objects) $(parse_objects)
+c_objects  := $(omem_objects) $(parse_objects)
 
 
 ################################### TARGETS ####################################
@@ -100,6 +100,7 @@ c_objects  := $(flex_objects) $(omem_objects) $(parse_objects)
 .PHONEY: docs debug install
 
 debug: $(tests) $(pexe_objects)
+
 
 ################################# PRODUCTIONS ##################################
 
@@ -127,11 +128,17 @@ testParser:$(srcdir)/testParser.c $(parse_objects)
 	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_objects) $(flex_objects)
 	chmod +x $@
 
-libppd.a: $(cpp_objects) $(c_objects)
+
+libppd.a: $(cpp_objects) $(c_objects) $(flex_objects)
 	ar rcs $@ $(cpp_objects) $(c_objects)
+
+
+$(WORKDIR)/dyn.l.o: $(srcdir)/dyn.l.c
+	$(CC) $(CFLAGS) -Wno-conversion -c -o $@ $<
 
 $(srcdir)/dyn.l.c: $(srcdir)/dyn.l
 	$(LEX) $(LFLAGS) -o $@ $<
+
 
 docs: Doxyfile README.md $(allfiles)
 	doxygen Doxyfile
