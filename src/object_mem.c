@@ -20,55 +20,70 @@
 /******************************************************************************/
 
 
-typedef enum{
-	pc_r=0,
-	pc_u32,
-	pc_u16,
-	pc_u8,
-	pc_uint,
+/****************************** OBJECT POINTERS *******************************/
+
+typedef enum PrimativeType{
+	pc_r=0 ,
 	pc_umax,
-	pc_s32,
-	pc_s16,
-	pc_s8,
-	pc_sint,
+	pc_uint,
+	pc_u64 ,
+	pc_u32 ,
+	pc_u16 ,
+	pc_u8  ,
 	pc_smax,
-	pc_f32
+	pc_sint,
+	pc_s64 ,
+	pc_s32 ,
+	pc_s16 ,
+	pc_s8  ,
+	pc_f64 ,
+	pc_f32 ,
+	pc_NUM // 15
 } PrimativeType;
 
-#define VAL_BIT_W ((sizeof(umax)-1)*8)
+#define VAL_BIT_W (sizeof(umax)*8 - 4) // 4 bits for type
+#define VAL_MASK  ((((umax)1)<<VAL_BIT_W)-1)
 
-
-
-static inline PrimativeType
-pointerType(Object_pt pointer){ return pointer>>VAL_BIT_W; }
-static inline umax
-pointerVal (Object_pt pointer){ return pointer&(~(((umax)0xff)<<VAL_BIT_W)); }
-
-static inline Object_pt pointerSetType(Object_pt object, PrimativeType type){
-	return pointerVal(object) | ((umax)type)<<VAL_BIT_W;
-}
-
-static inline Object_pt pointerSetVal(Object_pt object, umax val){
-	if(val >= ((umax)1<<VAL_BIT_W)){
-		msg_print(NULL, V_ERROR, "pointerSetVal(): val too large.\n");
-		return null;
-	}
-	
-	return pointerType(object) | val;
-}
+/********************************** OBJECTS ***********************************/
 
 typedef struct Object{
-	size_t    count   ; // field count
-	size_t    size    ; // field size in bytes
+	umax      size    ; // object size in bytes
 	Object_pt type    ; // the class of the object
 	Object_pt fields[]; // the object's data
 } Object;
 
+/******************************** OBJECT TABLE ********************************/
+
 typedef struct Object_table_entry{
 	Object *location;
-	umax    count; // reference count
-	bool    free;  // whether this entry is free for use
+	umax    refs; // reference count
+	bool    free; // whether this entry is free for use
 } Object_table_entry;
+
+/****************************** ESSENTIAL CLASSES *****************************/
+
+typedef enum e_class{
+	e_Umax,
+	e_Uint,
+	e_U64,
+	e_U32,
+	e_U16,
+	e_U8,
+	e_Smax,
+	e_Sint,
+	e_S64,
+	e_S32,
+	e_S16,
+	e_S8,
+	e_F64,
+	e_F32,
+	e_Class,
+	e_Object,
+	e_Context,
+	e_CompiledMethod,
+	e_String,
+	e_CNT
+} e_class;
 
 
 /******************************************************************************/
@@ -85,29 +100,8 @@ typedef struct Object_table_entry{
 /******************************************************************************/
 
 
-static Object_table_entry object_table[OBJ_TAB_ENTRIES];
-
+static Object_table_entry   object_table[OBJ_TAB_ENTRIES];
 static Object_table_entry * freeEntries;
-
-typedef enum{
-	e_Umax,
-	e_Uint,
-	e_U32,
-	e_U16,
-	e_U8,
-	e_Smax,
-	e_Sint,
-	e_S32,
-	e_S16,
-	e_S8,
-	e_F32,
-	e_Class,
-	e_Object,
-	e_Context,
-	e_CompiledMethod,
-	e_String,
-	e_CNT
-} e_class;
 
 
 /******************************************************************************/
@@ -115,23 +109,36 @@ typedef enum{
 /******************************************************************************/
 
 
+/*************************** OBJECT POINTER ACCESS ****************************/
+
+static inline PrimativeType
+pointerType(Object_pt pointer){ return pointer>>VAL_BIT_W; }
+static inline umax
+pointerVal (Object_pt pointer){ return pointer & VAL_MASK; }
+
+static inline Object_pt pointerSetType(Object_pt object, PrimativeType type){
+	return pointerVal(object) | (((Object_pt)type)<<VAL_BIT_W);
+}
+
+static inline Object_pt pointerSetVal(Object_pt pointer, umax value){
+	if(value > VAL_MASK){
+		msg_print(NULL, V_ERROR, "pointerSetVal(): value %x too large.\n", value);
+		return (Object_pt)NULL;
+	}
+	
+	return value | (pointer & ~VAL_MASK);
+}
+
 /**************************** OBJECT TABLE ACCESS *****************************/
 
-static inline bool isRef(Object_pt object){
-	return (pointerType(object)==pc_r);
-}
-
-static inline void mustBeRef(Object_pt object){
-	if(!isRef(object)) msg_print(NULL, V_ERROR, "mustBeRef(): not a ref.\n");
-}
-
-static inline Object_table_entry * tableEntry(Object_pt object){
-	umax value;
-	
-	mustBeRef(object);
-	value = pointerVal(object);
-	
-	return (Object_table_entry*)value;
+static inline Object_table_entry * tableEntry(Object_pt pointer){
+	if(isRef(pointer)) return (Object_table_entry*)pointer;
+	else{
+		msg_print(NULL, V_ERROR,
+			"tableEntry(): pointer %x is not a reference\n", pointer
+		);
+		return NULL; // fail hard
+	} 
 }
 
 static inline Object * objectOf(Object_pt object){
@@ -140,52 +147,61 @@ static inline Object * objectOf(Object_pt object){
 
 /******************************* THE FREE LIST ********************************/
 
-static inline void addToFreeList(Object_pt object){
-	tableEntry(object)->free     = true;
-	tableEntry(object)->count    = 0;
-	tableEntry(object)->location = (Object*)freeEntries;
-	freeEntries                  = tableEntry(object);
+static inline void addToFreeList(Object_table_entry * entry){
+	
+	// clear entry
+	entry->free     = true;
+	entry->refs     = 0;
+	
+	// add to list
+	entry->location = (Object*)freeEntries;
+	freeEntries     = entry;
 }
 
-static inline Object_pt removeFromFreeList(void){
-	Object_pt objectPointer;
+static inline Object_table_entry * getFromFreeList(Object * object){
+	Object_table_entry * entry;
 	
-	if(freeEntries == NULL) return null;
+	if(freeEntries == NULL) return NULL;
 	
-	objectPointer = pointerSetType(0, pc_r);
-	objectPointer = pointerSetVal(objectPointer, (umax)freeEntries);
-	//objectPointer.v   = (umax)freeEntries;
-	freeEntries->free = false;
-	freeEntries       = (Object_table_entry*) freeEntries->location;
-	return objectPointer;
+	// get an entry from the list
+	entry       = freeEntries;
+	freeEntries = (Object_table_entry*) freeEntries->location;
+	
+	// initialize entry
+	entry->free     = false;
+	entry->refs     = 1;
+	entry->location = object;
+	return entry;
 }
 
 /************************** ALLOCATE AND DEALLOCATE ***************************/
 
-static inline void deallocate(Object_pt object){
-	free(objectOf(object));
-	addToFreeList(object);
+static inline void deallocate(Object_pt pointer){
+	free(objectOf(pointer));
+	addToFreeList(tableEntry(pointer));
 }
 
-static inline Object_pt allocate(size_t size){
+static inline Object_pt allocate(umax size){
 	Object    *object;
-	Object_pt pointer;
+	Object_table_entry * entry;
+	umax fullSize = size + HEADER_SIZE;
 	
-	object = (Object*)malloc(size);
+	object = (Object*)malloc(fullSize);
 	if(!object){
 		msg_print(NULL, V_ERROR, "allocate(): out of memory.\n");
-		return null;
+		return 0;
 	}
 	
-	pointer = removeFromFreeList();
-	if(pointer == null){
+	entry = getFromFreeList(object);
+	if(entry == NULL){
 		msg_print(NULL, V_ERROR, "allocate(): object table full.\n");
 		free(object);
-		return null;
+		return 0;
 	}
 	
-	tableEntry(pointer)->location = object;
-	return pointer;
+	object->size = fullSize;
+	
+	return (Object_pt)entry;
 }
 
 
@@ -195,57 +211,82 @@ static inline Object_pt allocate(size_t size){
 
 
 void initObjectMem(){
-	for(uint i = OBJ_TAB_ENTRIES-1; i>0; i--){
-		object_table[i].count = 0;
-		object_table[i].free = true;
-		object_table[i].location = (Object*)&object_table[i+1];
-	}
-	
-	object_table[OBJ_TAB_ENTRIES-1].location = NULL;
-	freeEntries = &object_table[1];
+	freeEntries = NULL;
+	for(uint i = OBJ_TAB_ENTRIES-1; i>0; i--)
+		addToFreeList(&object_table[i]);
 }
 
+/***************************** OBJECT PROPERTIES ******************************/
 
-Object_pt TypeOf(Object_pt pointer){
+bool isRef(Object_pt pointer){
+	return (pointerType(pointer)==pc_r);
+}
+
+Object_pt typeOf(Object_pt pointer){
 	switch(pointerType(pointer)){
 	case pc_r   : return objectOf(pointer)->type;
 	
-	case pc_u32 : return pointerSetVal(0,(umax)&object_table[e_U32]);
-	case pc_u16 : return pointerSetVal(0,(umax)&object_table[e_U16]);
-	case pc_u8  : return pointerSetVal(0,(umax)&object_table[e_U8]);
-	case pc_uint: return pointerSetVal(0,(umax)&object_table[e_Uint]);
 	case pc_umax: return pointerSetVal(0,(umax)&object_table[e_Umax]);
+	case pc_uint: return pointerSetVal(0,(umax)&object_table[e_Uint]);
+	case pc_u64 : return pointerSetVal(0,(umax)&object_table[e_U64 ]);
+	case pc_u32 : return pointerSetVal(0,(umax)&object_table[e_U32 ]);
+	case pc_u16 : return pointerSetVal(0,(umax)&object_table[e_U16 ]);
+	case pc_u8  : return pointerSetVal(0,(umax)&object_table[e_U8  ]);
 	
-	case pc_s32 : return pointerSetVal(0,(umax)&object_table[e_S32]);
-	case pc_s16 : return pointerSetVal(0,(umax)&object_table[e_S16]);
-	case pc_s8  : return pointerSetVal(0,(umax)&object_table[e_S8]);
-	case pc_sint: return pointerSetVal(0,(umax)&object_table[e_Sint]);
 	case pc_smax: return pointerSetVal(0,(umax)&object_table[e_Smax]);
+	case pc_sint: return pointerSetVal(0,(umax)&object_table[e_Sint]);
+	case pc_s64 : return pointerSetVal(0,(umax)&object_table[e_S64 ]);
+	case pc_s32 : return pointerSetVal(0,(umax)&object_table[e_S32 ]);
+	case pc_s16 : return pointerSetVal(0,(umax)&object_table[e_S16 ]);
+	case pc_s8  : return pointerSetVal(0,(umax)&object_table[e_S8  ]);
 	
+	case pc_f64 : return pointerSetVal(0,(umax)&object_table[e_F64]);
 	case pc_f32 : return pointerSetVal(0,(umax)&object_table[e_F32]);
-	default:
-		msg_print(NULL, V_ERROR, "ClassOf(): unknown class.\n");
-		return null;
+	
+	case pc_NUM:
+	default    :
+		msg_print(NULL, V_ERROR, "typeOf(): unknown type.\n");
+		return 0;
 	}
 }
 
-size_t fieldCount(Object_pt object){
-	return objectOf(object)->count;
-}
-
-size_t SizeOf(Object_pt object){
+umax sizeOf(Object_pt object){
 	if(isRef(object))
-		return fieldCount(object) * objectOf(object)->size + HEADER_SIZE;
+		return objectOf(object)->size;
 	else return sizeof(Object_pt);
 }
 
+/************************** INSTANTIATE NEW OBJECTS ***************************/
 
-Object_pt FetchPointer(Object_pt pointer, size_t index){
+Object_pt newObject(Object_pt type, umax bytes){
+	Object_pt pointer;
+	
+	pointer                 = allocate(bytes);
+	objectOf(pointer)->type = type;
+	return pointer;
+}
+
+void incRefsTo(Object_pt pointer){
+	if(isRef(pointer)) tableEntry(pointer)->refs++;
+	else msg_print(NULL, V_ERROR, "incRefsTo(): %x not a ref.\n", pointer);
+}
+
+void decRefsTo(Object_pt pointer){
+	if(isRef(pointer)){
+		if(tableEntry(pointer)->refs <= 1) deallocate(pointer);
+		else tableEntry(pointer)->refs--;
+	}
+	else msg_print(NULL, V_ERROR, "incRefsTo(): %x not a ref.\n", pointer);
+}
+
+/******************************** FIELD ACCESS ********************************/
+
+Object_pt fetchPointer(Object_pt pointer, umax index){
 	Object_pt * fields;
 	
-	if(index >= objectOf(pointer)->count){
+	if(index >= objectOf(pointer)->size){
 		msg_print(NULL, V_ERROR, "FetchField(): out of bounds.\n");
-		return null;
+		return 0;
 	}
 	
 	fields = (Object_pt*)&(objectOf(pointer)->fields);
@@ -253,41 +294,15 @@ Object_pt FetchPointer(Object_pt pointer, size_t index){
 	return fields[index];
 }
 
-void StorePointer(Object_pt pointer, size_t index, Object_pt value){
-	mustBeRef(pointer);
+void storePointer(Object_pt pointer, umax index, Object_pt value){
+	if(!isRef(pointer)) msg_print(NULL, V_ERROR,
+		"storePointer(): %x not a ref.\n", pointer);
 	
 	if(isRef(objectOf(pointer)->fields[index]))
-		DecRefsTo(objectOf(pointer)->fields[index]);
+		decRefsTo(objectOf(pointer)->fields[index]);
 	
 	objectOf(pointer)->fields[index]=value;
-	IncRefsTo(value);
-}
-
-void IncRefsTo(Object_pt object){
-	tableEntry(object)->count++;
-	//object.v.pv_r->count++;
-}
-
-void DecRefsTo(Object_pt object){
-	mustBeRef(object);
-	if(tableEntry(object)->count <= 1) deallocate(object);
-	else tableEntry(object)->count--;
-}
-
-
-
-Object_pt NewObject(Object_pt type, umax fieldCount, size_t fieldSize){
-	size_t    size;
-	Object_pt pointer;
-	
-	size = fieldCount * fieldSize + HEADER_SIZE;
-	pointer = allocate(size);
-	
-	objectOf(pointer)->type = type;
-	objectOf(pointer)->count = size;
-	
-	tableEntry(pointer)->count =1;
-	return pointer;
+	incRefsTo(value);
 }
 
 /****************************** PRIMITIVE TYPES *******************************/

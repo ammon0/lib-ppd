@@ -15,41 +15,52 @@
 
 #include <util/types.h>
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef umax Object_pt;
 
-static const Object_pt null =0;
+
 
 void initObjectMem(void);
 
-/// Return the class of an object
-Object_pt TypeOf(Object_pt object);
-/// Return the byte size of an object
-size_t SizeOf  (Object_pt object);
-/// Return the number of fields in an object
-size_t fieldCount(Object_pt object);
+/***************************** OBJECT PROPERTIES ******************************/
 
+bool isRef(Object_pt object);
+
+Object_pt typeOf(Object_pt object);
+/// Return the byte size of an object
+umax sizeOf  (Object_pt object);
+/// Return the number of fields in an object
+umax fieldCount(Object_pt object);
+
+/************************** INSTANTIATE NEW OBJECTS ***************************/
+
+Object_pt newObject(Object_pt clss, umax bytes);
+Object_pt copyObjecet(Object_pt object);
+
+void incRefsTo(Object_pt object);
+void decRefsTo(Object_pt object);
+
+/******************************** FIELD ACCESS ********************************/
 
 // add more of these as necessary
-Object_pt FetchPointer(Object_pt target, size_t index);
-void      StorePointer(Object_pt target, size_t index, Object_pt value);
+Object_pt fetchPointer(Object_pt target, umax index);
+void      storePointer(Object_pt target, umax index, Object_pt value);
 
-uint8_t FetchByte(Object_pt target, size_t index);
-void    StoreByte(Object_pt target, size_t index, uint8_t value);
+umax    fetchUmax(Object_pt target, umax index);
+void    storeUmax(Object_pt target, umax index, umax value);
 
-void IncRefsTo(Object_pt object);
-void DecRefsTo(Object_pt object);
+uint8_t fetchU8(Object_pt target, umax index);
+void    storeU8(Object_pt target, umax index, uint8_t value);
 
+/********************************* ENUMERATION ********************************/
 
+Object_pt firstInst(Object_pt class_object);
+Object_pt nextInst (Object_pt object);
 
-Object_pt NewObject(Object_pt clss, umax fields, size_t fieldSize);
-Object_pt CopyObjecet(Object_pt object);
-
-Object_pt FirstInst(Object_pt class_object);
-Object_pt NextInst (Object_pt object);
-
-//void SwapPointers(Object_pt first, Object_pt second);
-
+/****************************** PRIMITIVE TYPES *******************************/
 
 uint32_t U32ValOf (Object_pt object);
 uint16_t U16ValOf (Object_pt object);
@@ -76,6 +87,10 @@ Object_pt SintObjOf(int      num);
 Object_pt SmaxObjOf(imax     num);
 Object_pt F32ObjOf (float    num);
 
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif // _OBJECT_MEM_H
 
