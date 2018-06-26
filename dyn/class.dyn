@@ -8,7 +8,11 @@
 Class:Class{
 	(Class) superClass IS Object
 	(Dictionary)methodDictionary
-	instanceSpec
+	instanceSpec # integer with bitfields
+	# pointers or integers :1
+	# integer width :2?
+	# indexable fields present :1
+	# number of fixed fields : remainder
 	(Set(Class)) subClasses IS nil
 	
 	(Array) instanceVariables IS {"superClass" "methodDictionary" "instanceSpec" "subClasses" "instanceVariables" "name" "comment"}
