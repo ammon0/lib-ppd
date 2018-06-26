@@ -47,9 +47,9 @@ typedef enum PrimativeType{
 /********************************** OBJECTS ***********************************/
 
 typedef struct Object{
-	umax      size    ; // object size in bytes
-	Object_pt type    ; // the class of the object
-	Object_pt fields[]; // the object's data
+	umax      size  ; // object size in bytes
+	Object_pt type  ; // the class of the object
+	uint8_t   data[]; // the object's data
 } Object;
 
 /******************************** OBJECT TABLE ********************************/
@@ -189,14 +189,14 @@ static inline Object_pt allocate(umax size){
 	object = (Object*)malloc(fullSize);
 	if(!object){
 		msg_print(NULL, V_ERROR, "allocate(): out of memory.\n");
-		return 0;
+		return NIL;
 	}
 	
 	entry = getFromFreeList(object);
 	if(entry == NULL){
 		msg_print(NULL, V_ERROR, "allocate(): object table full.\n");
 		free(object);
-		return 0;
+		return NIL;
 	}
 	
 	object->size = fullSize;
@@ -246,7 +246,7 @@ Object_pt typeOf(Object_pt pointer){
 	case pc_NUM:
 	default    :
 		msg_print(NULL, V_ERROR, "typeOf(): unknown type.\n");
-		return 0;
+		return NIL;
 	}
 }
 
@@ -281,27 +281,48 @@ void decRefsTo(Object_pt pointer){
 
 /******************************** FIELD ACCESS ********************************/
 
-Object_pt fetchPointer(Object_pt pointer, umax index){
-	Object_pt * fields;
-	
-	if(index >= objectOf(pointer)->size){
-		msg_print(NULL, V_ERROR, "FetchField(): out of bounds.\n");
-		return 0;
-	}
-	
-	fields = (Object_pt*)&(objectOf(pointer)->fields);
-	
-	return fields[index];
+
+static inline bool outOfBounds(Object_pt target, umax index, umax radix){
+	return( index*radix+sizeof(Object) > objectOf(target)->size );
 }
 
-void storePointer(Object_pt pointer, umax index, Object_pt value){
-	if(!isRef(pointer)) msg_print(NULL, V_ERROR,
-		"storePointer(): %x not a ref.\n", pointer);
+Object_pt fetchPointer(Object_pt target, umax index){
+	Object_pt *data_pt;
 	
-	if(isRef(objectOf(pointer)->fields[index]))
-		decRefsTo(objectOf(pointer)->fields[index]);
+	if(!isRef(target)){
+		msg_print(NULL, V_ERROR,
+			"fetchPointer(): %x is not a reference.\n", target);
+		return NIL;
+	}
 	
-	objectOf(pointer)->fields[index]=value;
+	if(outOfBounds(target,index,SZ_PT)){
+		msg_print(NULL, V_ERROR,
+			"fetchPointer(): %x is out of bounds.\n", index);
+		return NIL;
+	}
+	
+	data_pt = (Object_pt*)objectOf(target)->data;
+	return data_pt[index];
+}
+
+void storePointer(Object_pt target, umax index, Object_pt value){
+	Object_pt *data_pt;
+	
+	if(!isRef(target)){
+		msg_print(NULL, V_ERROR, "storePointer(): %x not a ref.\n", target);
+		return;
+	}
+	
+	if(outOfBounds(target,index,SZ_PT)){
+		msg_print(NULL, V_ERROR, "storePointer(): %x is out of bounds.\n", index);
+		return;
+	}
+	
+	data_pt = (Object_pt*)objectOf(target)->data;
+	
+	if( isRef(data_pt[index]) ) decRefsTo(data_pt[index]);
+	
+	data_pt[index] = value;
 	incRefsTo(value);
 }
 

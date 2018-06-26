@@ -21,6 +21,10 @@
 
 typedef umax Object_pt;
 
+#define NIL ((Object_pt)0);
+
+
+#define SZ_PT (sizeof(Object_pt))
 
 
 void initObjectMem(void);
