@@ -132,21 +132,31 @@ NEQ return T_NEQ;
 
  /* special instructions */
 CLASS return T_CLSS;
-COPY  return T_CPY;
+COPY  return T_COPY;
+
+ /* stack instructions */
+PUSHF return T_PUSHF; // push a receiver field onto the stack
+PUSHT return T_PUSHT; // push a temp onto the stack
+PUSHC return T_PUSHC; // push a constant onto the stack
+PUSHR return T_PUSHR; // push the receiver onto the stack
+PUSHX return T_PUSHX; // push the active context
+POPT  return T_POPT;  // pop a temp off the stack
+POPF  return T_POPF;  // pop a receiver field off the stack
+POP   return T_POP;   // pop stack top
+DUP   return T_DUP;   // duplicate the stack top
+
+ /* jump bytecodes */
+JMP return T_JMP; // unconditional relative jump
+JT  return T_JT;  // relative jump on true
+JF  return T_JF;  // relative jump on false
+
+ /* return bytecodes */
+RETS return T_RETS; // return the stack top
+RETR return T_RETR; // return the receiver
+RETC return T_RETC; // return a constant
 
 
-PUSH  return T_PUSH;
-PUSHR return T_PUSHR;
-PUSHT return T_PUSHT;
 
-POP  return T_POP;
-SEND return T_SEND;
-
-RETS return T_RETS;
-RETR return T_RETR;
-RETT return T_RETT;
-RETF return T_RETF;
-RETN return T_RETN;
 
  /************************** PRIMARY DATA TYPES *******************************/
 
@@ -165,7 +175,7 @@ RETN return T_RETN;
 
 
  /* This needs to be the last thing */
-<*>.|\n msg_print(NULL, V_ERROR, "unknown token: %s\n", yytext);
+<*>.|\n msg_print(NULL, V_ERROR, "unknown token: '%s'\n", yytext);
 
 %%
 

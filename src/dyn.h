@@ -54,19 +54,11 @@ typedef enum{
 	T_IS,   // declares initial value
 	T_METH, // indicates begining of methods section
 	
-	
-	
-	// Bytecodes
-	T_OBRK,
-	T_CBRK,
-	
-	T_DOT,
-	T_COMA,
-	
 	// send instructions
-	T_SEND,
+	T_SEND,  // send constant selector with j arguments
+	T_SENDS, // send constant selector to superClass with j arguments
 	
-	// arithmetic instructions
+	// arithmetic messages
 	T_ADD,
 	T_SUB,
 	T_MUL,
@@ -88,27 +80,33 @@ typedef enum{
 	T_EQ,
 	T_NEQ,
 	
-	// special instructions
+	// special messages
 	T_CLSS,
-	T_CPY,
+	T_COPY,
+	T_OBRK,
+	T_CBRK,
 	
-	// stack instructions
-	T_PUSH,
-	T_PUSHR,
-	T_PUSHT,
-	T_POP,
+	// stack bytecodes
+	T_PUSHF, // push a receiver field onto the stack
+	T_PUSHT, // push a temp onto the stack
+	T_PUSHC, // push a constant onto the stack
+	T_PUSHR, // push the receiver onto the stack
+	T_PUSHX, // push the active context
 	
-	// jump instructions
-	T_JMP,
-	T_JT,
-	T_JF,
+	T_POPT,  // pop a temp off the stack
+	T_POPF,  // pop a receiver field off the stack
+	T_POP,   // pop stack top
+	T_DUP,   // duplicate the stack top
 	
-	// return instructions
-	T_RETS,
-	T_RETR,
-	T_RETT,
-	T_RETF,
-	T_RETN,
+	// jump bytecodes
+	T_JMP, // unconditional relative jump
+	T_JT,  // relative jump on true
+	T_JF,  // relative jump on false
+	
+	// return bytecodes
+	T_RETS, // return the stack top
+	T_RETR, // return the receiver
+	T_RETC, // return a constant
 	NUM_TOKENS
 } token_t;
 
@@ -138,36 +136,31 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_CPAR ",
 		"T_IS   ",
 		"T_METH ",
+		"T_SEND ",
+		"T_SENDS",
+		"T_ADD  ",
+		"T_SUB  ",
+		"T_MUL  ",
+		"T_DIV  ",
+		"T_MOD  ",
+		"T_SL   ",
+		"T_SR   ",
+		"T_SRS  ",
+		"T_ROL  ",
+		"T_ROR  ",
 		
-		"[    ",
-		"]    ",
-		".    ",
-		",    ",
+		"T_AND  ",
+		"T_OR   ",
+		"T_NOT  ",
+		"T_LT   ",
+		"T_GT   ",
+		"T_LTE  ",
+		"T_GTE  ",
+		"T_EQ   ",
+		"T_NEQ  ",
 		
-		"SEND ",
-		"ADD  ",
-		"SUB  ",
-		"MUL  ",
-		"DIV  ",
-		"MOD  ",
-		"SL   ",
-		"SR   ",
-		"SRS  ",
-		"ROL  ",
-		"ROR  ",
-		
-		"AND  ",
-		"OR   ",
-		"NOT  ",
-		"LT   ",
-		"GT   ",
-		"LTE  ",
-		"GTE  ",
-		"EQ   ",
-		"NEQ  ",
-		
-		"CLASS",
-		"COPY ",
+		"T_CLASS",
+		"T_COPY ",
 		
 		"PUSH ",
 		"PUSH RECVR",

@@ -99,7 +99,12 @@ static void instructions(void){
 		
 		switch(token){
 		// send instructions
-		case T_SEND: getNext(); match_token(T_INT); break;
+		case T_SEND:
+		case T_SENDS:
+			getNext();
+			match_token(T_INT);
+			match_token(T_STR);
+			break;
 	
 		// arithmetic instructions
 		case T_ADD: getNext(); break;
@@ -121,38 +126,38 @@ static void instructions(void){
 		case T_GTE: getNext(); break;
 		case T_EQ : getNext(); break;
 		case T_NEQ: getNext(); break;
-	
+		
 		// special instructions
 		case T_CLSS: getNext(); break;
-		case T_CPY : getNext(); break;
-	
+		case T_COPY: getNext(); break;
+		
 		// stack instructions
-		case T_PUSH : getNext(); break;
-		case T_PUSHR: getNext(); break;
+		case T_PUSHF: getNext(); match_token(T_INT); break;
 		case T_PUSHT: getNext(); match_token(T_INT); break;
+		case T_PUSHC: getNext(); match_token(T_INT); break;
+		case T_PUSHR: getNext(); break;
+		case T_PUSHX: getNext(); break;
+		case T_POPF : getNext(); match_token(T_INT); break;
+		case T_POPT : getNext(); match_token(T_INT); break;
 		case T_POP  : getNext(); break;
-	
+		case T_DUP  : getNext(); break;
+		
 		// jump instructions
 		case T_JMP: getNext(); match_token(T_NAME); break;
 		case T_JT : getNext(); match_token(T_NAME); break;
 		case T_JF : getNext(); match_token(T_NAME); break;
-	
+		
 		// return instructions
 		case T_RETS: getNext(); break;
 		case T_RETR: getNext(); break;
-		case T_RETT: getNext(); break;
-		case T_RETF: getNext(); break;
-		case T_RETN: getNext(); break;
+		case T_RETC: getNext(); match_token(T_NAME); break;
 		
-		
-		
-		case T_INT : // errors
+		// errors
+		case T_INT :
 		case T_STR :
 		case T_NAME:
 		case T_OBRK:
 		case T_CBRK:
-		case T_DOT:
-		case T_COMA:
 		case T_COLO:
 		case T_OBRC:
 		case T_CBRC:
