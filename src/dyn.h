@@ -81,20 +81,23 @@ typedef enum{
 	T_NEQ,
 	
 	// special messages
-	T_CLSS,
-	T_COPY,
-	T_OBRK,
-	T_CBRK,
+	T_TYPE, // 0, replace object on stack top with its type
+	T_COPY, // 0, replace object on stack top with a shallow copy
+	T_NEW , // 0, replace type object on stack top with an instance
+	T_NEWC, // 1, re
+	T_GET , // 1, 
+	T_SET , // 2, 
 	
 	// stack bytecodes
-	T_PUSHF, // push a receiver field onto the stack
-	T_PUSHT, // push a temp onto the stack
-	T_PUSHC, // push a constant onto the stack
+//	T_PUSHF, // push a receiver field onto the stack
+//	T_PUSHT, // push a temp onto the stack
+//	T_PUSHC, // push a constant onto the stack
+	T_PUSH,  
 	T_PUSHR, // push the receiver onto the stack
 	T_PUSHX, // push the active context
 	
-	T_POPT,  // pop a temp off the stack
-	T_POPF,  // pop a receiver field off the stack
+//	T_POPT,  // pop a temp off the stack
+//	T_POPF,  // pop a receiver field off the stack
 	T_POP,   // pop stack top
 	T_DUP,   // duplicate the stack top
 	

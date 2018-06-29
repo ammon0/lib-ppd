@@ -26,6 +26,11 @@ char err_array[100];
 
 log_descriptor parseLog = NULL;
 
+uint8_t *byteBuffer;
+size_t  bufferSize, ip;
+
+#define BUF_SZ 1024
+
 
 /******************************************************************************/
 //                             INLINE FUNCTIONS
@@ -83,7 +88,57 @@ static inline void match_token(token_t t){
 	else expected(token_dex[t]);
 }
 
+/******************************* BYTECODE BUFFER ******************************/
 
+static void initBuffer(void){
+	byteBuffer = malloc(BUF_SZ);
+	if(!byteBuffer){
+		msg_print(parseLog, V_ERROR, "initBuffer(): out of memory.\n");
+		exit(EXIT_FAILURE);
+	}
+	bufferSize = BUF_SZ;
+	ip = 0;
+}
+
+static inline void growBuffer(void){
+	bufferSize <<=1;
+	byteBuffer = realloc(byteBuffer, bufferSize);
+	if(!byteBuffer){
+		msg_print(parseLog, V_ERROR, "initBuffer(): out of memory.\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+static void addByte(uint8_t b){
+	byteBuffer[ip] = b;
+	ip++;
+	
+	if(ip == bufferSize) growBuffer();
+}
+
+
+/******************************************************************************/
+//                            INSTRUCTION MACROS
+/******************************************************************************/
+
+
+static inline void simpleInstruction(void){ addByte(token); getNext(); }
+
+static void jumpInstruction(void){
+	simpleInstruction();
+	match_token(T_NAME);
+}
+
+static void frameInstruction(void){
+	simpleInstruction();
+	match_token(T_INT);
+}
+
+static void sendInstruction(void){
+	simpleInstruction();
+	match_token(T_INT);
+	match_token(T_STR);
+}
 
 /******************************************************************************/
 //                             PARSE FUNCTIONS
@@ -98,66 +153,60 @@ static void instructions(void){
 		}
 		
 		switch(token){
-		// send instructions
+		// message instructions
 		case T_SEND:
-		case T_SENDS:
-			getNext();
-			match_token(T_INT);
-			match_token(T_STR);
-			break;
-	
-		// arithmetic instructions
-		case T_ADD: getNext(); break;
-		case T_SUB: getNext(); break;
-		case T_MUL: getNext(); break;
-		case T_DIV: getNext(); break;
-		case T_MOD: getNext(); break;
-		case T_LSH: getNext(); break;
-		case T_RSH: getNext(); break;
-		case T_SHA: getNext(); break;
-		case T_ROL: getNext(); break;
-		case T_ROR: getNext(); break;
-		case T_AND: getNext(); break;
-		case T_OR : getNext(); break;
-		case T_NOT: getNext(); break;
-		case T_LT : getNext(); break;
-		case T_GT : getNext(); break;
-		case T_LTE: getNext(); break;
-		case T_GTE: getNext(); break;
-		case T_EQ : getNext(); break;
-		case T_NEQ: getNext(); break;
+		case T_SENDS: sendInstruction(); break;
 		
-		// special instructions
-		case T_CLSS: getNext(); break;
-		case T_COPY: getNext(); break;
+		// arithmetic message instructions
+		case T_ADD:
+		case T_SUB:
+		case T_MUL:
+		case T_DIV:
+		case T_MOD:
+		case T_LSH:
+		case T_RSH:
+		case T_SHA:
+		case T_ROL:
+		case T_ROR:
+		case T_AND:
+		case T_OR :
+		case T_NOT:
+		case T_LT :
+		case T_GT :
+		case T_LTE:
+		case T_GTE:
+		case T_EQ :
+		case T_NEQ:
+		
+		// special message instructions
+		case T_TYPE:
+		case T_COPY:
+		case T_NEW :
+		case T_NEWC:
+		case T_GET :
+		case T_SET : simpleInstruction(); break;
 		
 		// stack instructions
-		case T_PUSHF: getNext(); match_token(T_INT); break;
-		case T_PUSHT: getNext(); match_token(T_INT); break;
-		case T_PUSHC: getNext(); match_token(T_INT); break;
-		case T_PUSHR: getNext(); break;
-		case T_PUSHX: getNext(); break;
-		case T_POPF : getNext(); match_token(T_INT); break;
-		case T_POPT : getNext(); match_token(T_INT); break;
-		case T_POP  : getNext(); break;
-		case T_DUP  : getNext(); break;
+		case T_PUSH :
+		case T_PUSHR:
+		case T_PUSHX:
+		case T_POP  :
+		case T_DUP  : simpleInstruction(); break;
 		
 		// jump instructions
-		case T_JMP: getNext(); match_token(T_NAME); break;
-		case T_JT : getNext(); match_token(T_NAME); break;
-		case T_JF : getNext(); match_token(T_NAME); break;
+		case T_JMP:
+		case T_JT :
+		case T_JF : jumpInstruction(); break;
 		
 		// return instructions
-		case T_RETS: getNext(); break;
-		case T_RETR: getNext(); break;
-		case T_RETC: getNext(); match_token(T_NAME); break;
+		case T_RETS:
+		case T_RETR: simpleInstruction(); break;
+		case T_RETC: frameInstruction(); break;
 		
 		// errors
 		case T_INT :
 		case T_STR :
 		case T_NAME:
-		case T_OBRK:
-		case T_CBRK:
 		case T_COLO:
 		case T_OBRC:
 		case T_CBRC:
@@ -258,6 +307,8 @@ static void Methods(void){
 		match_token(T_NAME);
 		argList();
 		
+		initBuffer(); // initialize the bytecode buffer
+		
 		match_token(T_OBRC);
 		instructions();
 		match_token(T_CBRC);
@@ -273,6 +324,7 @@ void objectParser(void){
 	msg_print(parseLog, V_DEBUG, "objectParser(): start\n");
 	
 	getNext(); // initialize the token
+	
 	
 	while(token == T_NL) getNext(); // eat leading whitespace
 	

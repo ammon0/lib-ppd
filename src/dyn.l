@@ -131,8 +131,12 @@ EQ  return T_EQ;
 NEQ return T_NEQ;
 
  /* special instructions */
-CLASS return T_CLSS;
-COPY  return T_COPY;
+TYPE return T_TYPE;
+COPY return T_COPY;
+NEW  return T_NEW;
+NEWC return T_NEWC;
+GET  return T_GET;
+SET  return T_SET;
 
  /* stack instructions */
 PUSHF return T_PUSHF; // push a receiver field onto the stack

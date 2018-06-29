@@ -39,9 +39,10 @@ METHODS
 	
 	########################### TEST FUNCTIONALITY #############################
 	
-	(Class) class () {
-		CLASS # put this object's class pointer on top of the stack
-		RETS  # return the stack top
+	(Class) type () {
+		# receiver is on top of the stack
+		TYPE # put the receiver's type pointer on top of the stack
+		RETS # return the stack top
 	}
 	
 	(Bool) isKindOf  ((Class)aClass) {}
@@ -68,7 +69,7 @@ METHODS
 	################################# COPYING ##################################
 	
 	(Object) shallowCopy (){
-		COPY # create a shallow copy
+		COPY # create a shallow copy of the stack top
 		RETS # return it
 	}
 	
@@ -79,11 +80,18 @@ METHODS
 	
 	# accessing
 	(Object) getIndex (index){ # all objects are just arrays
-		
+		PUSHT 0 # push index onto the stack
+		GET     # get the value on the stack
+		RETS    # return the stack top
 	}
+	
 	(Object) setIndex (index value){
-		
+		PUSHT value # push value onto the stack
+		PUSHT index # push index onto the stack
+		SET
+		RETS
 	}
+	
 	(uint) size (){
 		
 	}

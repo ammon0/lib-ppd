@@ -27,6 +27,77 @@
 const umax headerIdx  = 0;
 const umax constStart = 1;
 
+/*
+typedef struct CompiledMethodHeader{
+	type
+	padding
+	
+	umax largeContext  : 1;
+	umax primativeSelf : 1;
+	umax primativeField: 1;
+	
+	umax primativeIndex: 8;
+	umax constants     : 6; // or field to be returned
+	umax temps         : 5;
+	umax args          : 5;
+} CompiledMethodHeader;
+
+*/
+
+typedef enum byteCode{
+/*	bytecode     ,  pattern args description */
+	b_nop        , ///< B   X	do nothing
+	
+	/* Stack Bytecodes */
+	b_push_field , ///< BB  X	push a receiver field
+	b_push_temp  , ///< BB  X	push a temp
+	b_push_const , ///< BB  X	push a constant
+	b_push_rec   , ///< B   X	push the receiver
+	b_push_active, ///< B   X	push the active context
+	
+	b_pop        , ///< B   X	pop
+	
+	b_store_field, ///< BB  X	store the stack top in a receiver field
+	b_store_temp , ///< BB  X	store the stack top in a temp variable
+	
+	/* Return Bytecodes */
+	b_return     , ///< B   X	stack top is return value
+	
+	/* Jump Bytecodes */
+	b_jump       , ///< BB  X	unconditional jump
+	b_jump_true  , ///< BB  X	pop and jump if stack top is true
+	b_jump_false , ///< BB  X	pop and jump if stack top is false
+	
+	/* Send ByteCodes */
+	b_send       , ///< BBB *	send const selector with args
+	b_send_super , ///< BBB *	send const selector to superClass with args
+	
+	b_send_add   , ///< B   1	
+	b_send_sub   , ///< B   1	
+	b_send_mul   , ///< B   1	
+	b_send_div   , ///< B   1	
+	b_send_mod   , ///< B   1	
+	b_send_shift , ///< B   1	
+	b_send_rotate, ///< B   1	
+	b_send_and   , ///< B   1	
+	b_send_or    , ///< B   1	
+	b_send_lt    , ///< B   1	
+	b_send_gt    , ///< B   1	
+	b_send_lte   , ///< B   1	
+	b_send_gte   , ///< B   1	
+	b_send_eq    , ///< B   1	
+	b_send_neq   , ///< B   1	
+	
+	b_send_type  , ///< B   0	
+	b_send_copy  , ///< B   0	
+	b_send_new   , ///< B   0	
+	b_send_newc  , ///< B   1	
+	b_send_get   , ///< B   1	
+	b_send_set   , ///< B   1	
+	b_send_same  , ///< B   0	whether two pointers on stack top are the same
+	b_NUM
+} ByteCode;
+
 
 /******************************************************************************/
 //                                 CONTEXT
@@ -58,9 +129,11 @@ const umax superClassIdx        = 0;
 const umax messageDictionaryIdx = 1;
 const umax instanceSpecIdx      = 2;
 
+
 /******************************************************************************/
 //                            METHOD DICTIONARY
 /******************************************************************************/
+
 
 const umax methodArrayIdx = 1;
 const umax selectorStart  = 2;
