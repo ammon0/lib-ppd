@@ -19,12 +19,10 @@
 	extern "C" {
 #endif
 
+
 typedef umax Object_pt;
 
 #define NIL ((Object_pt)0)
-
-
-#define SZ_PT (sizeof(Object_pt))
 
 
 void initObjectMem(void);
@@ -35,9 +33,7 @@ bool isRef(Object_pt object);
 
 Object_pt typeOf(Object_pt object);
 /// Return the byte size of an object
-umax sizeOf  (Object_pt object);
-/// Return the number of fields in an object
-umax fieldCount(Object_pt object);
+umax sizeOf(Object_pt object);
 
 /************************** INSTANTIATE NEW OBJECTS ***************************/
 

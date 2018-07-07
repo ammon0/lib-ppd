@@ -13,10 +13,11 @@
 #ifndef _VM_H
 #define _VM_H
 
-#include "object_mem.h"
 
-/** Contains definitions of data structures needed by the vm
+/** Contains indexes and accessors of dynamic objects needed by the vm
  */
+
+#include <ppd/object_mem.h>
 
 
 /******************************************************************************/
@@ -105,12 +106,12 @@ typedef enum byteCode{
 
 
 // MethodContext fields
-const umax senderIdx      = 0;
-const umax ipIdx          = 1;
-const umax spIdx          = 2;
-const umax methodIdx      = 3;
-const umax receiverIdx    = 5;
-const umax tempFrameStart = 6;
+const umax senderIdx   = 0;
+const umax ipIdx       = 1;
+const umax spIdx       = 2;
+const umax methodIdx   = 3;
+const umax receiverIdx = 5;
+const umax tempStart   = 6;
 
 
 // BlockContext fields
@@ -125,9 +126,34 @@ const umax homeIdx     = 5;
 /******************************************************************************/
 
 
+/*
+typedef struct instanceSpec{
+	Object_pt type           : 4;
+	Object_pt padding        : *;
+	Object_pt indexable      : 1; // indexable fields present
+	Object_pt fieldWidth     : 2; // 2^fieldWidth
+	Object_pt fixedFieldCount: 13;
+} instanceSpec;
+ */
+
+const uint8_t fixedFieldCountShift = 0;
+const uint8_t fieldWidthShift      = 13;
+const uint8_t indexableShift       = 15;
+const umax    fixedFieldCountMask  = 0X1FFF;
+const umax    fieldWidthMask       = 0X3;
+const umax    indexableMask        = 0X1;
+
 const umax superClassIdx        = 0;
 const umax messageDictionaryIdx = 1;
 const umax instanceSpecIdx      = 2;
+
+static inline Object_pt instanceSpec(Object_pt typePointer){
+	return fetchPointer(typePointer, instanceSpecIdx);
+}
+
+static inline umax fieldWidth(Object_pt instanceSpec){
+	return (1<<((instanceSpec>>fieldWidthShift)&fieldWidthMask));
+}
 
 
 /******************************************************************************/

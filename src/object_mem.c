@@ -11,6 +11,7 @@
 
 
 #include <ppd/object_mem.h>
+//#include <ppd/objects.h>
 #include <util/msg.h>
 #include <stdlib.h>
 
@@ -47,8 +48,8 @@ typedef enum PrimativeType{
 /********************************** OBJECTS ***********************************/
 
 typedef struct Object{
-	umax      size  ; // object size in bytes
 	Object_pt type  ; // the class of the object
+	umax      size  ; // bytes of data in object
 	uint8_t   data[]; // the object's data
 } Object;
 
@@ -92,7 +93,7 @@ typedef enum e_class{
 
 
 #define OBJ_TAB_ENTRIES ((umax)1<<16)
-#define HEADER_SIZE     (sizeof(Object))
+//#define HEADER_SIZE     (sizeof(Object))
 
 
 /******************************************************************************/
@@ -184,9 +185,8 @@ static inline void deallocate(Object_pt pointer){
 static inline Object_pt allocate(umax size){
 	Object    *object;
 	Object_table_entry * entry;
-	umax fullSize = size + HEADER_SIZE;
 	
-	object = (Object*)malloc(fullSize);
+	object = (Object*)malloc(size + sizeof(Object));
 	if(!object){
 		msg_print(NULL, V_ERROR, "allocate(): out of memory.\n");
 		return NIL;
@@ -199,7 +199,7 @@ static inline Object_pt allocate(umax size){
 		return NIL;
 	}
 	
-	object->size = fullSize;
+	object->size = size;
 	
 	return (Object_pt)entry;
 }
@@ -256,13 +256,20 @@ umax sizeOf(Object_pt object){
 	else return sizeof(Object_pt);
 }
 
+//umax fieldCount(Object_pt pointer){
+//	if(isRef(pointer))
+//		return objectOf(pointer)->size / objectOf(pointer)->width;
+//	else return 0;
+//}
+
+
 /************************** INSTANTIATE NEW OBJECTS ***************************/
 
 Object_pt newObject(Object_pt type, umax bytes){
 	Object_pt pointer;
 	
-	pointer                 = allocate(bytes);
-	objectOf(pointer)->type = type;
+	pointer                  = allocate(bytes);
+	objectOf(pointer)->type  = type;
 	return pointer;
 }
 
@@ -283,23 +290,28 @@ void decRefsTo(Object_pt pointer){
 
 
 static inline bool outOfBounds(Object_pt target, umax index, umax radix){
-	return( index*radix+sizeof(Object) > objectOf(target)->size );
+	return( index*radix > objectOf(target)->size );
+}
+
+static inline bool check(Object_pt target, umax index, umax radix){
+	if(!isRef(target)){
+		msg_print(NULL, V_ERROR,
+			"check(): %x is not a reference.\n", target);
+		return true;
+	}
+	
+	if(outOfBounds(target,index,radix)){
+		msg_print(NULL, V_ERROR,
+			"check(): %x is out of bounds.\n", index);
+		return true;
+	}
+	return false;
 }
 
 Object_pt fetchPointer(Object_pt target, umax index){
 	Object_pt *data_pt;
 	
-	if(!isRef(target)){
-		msg_print(NULL, V_ERROR,
-			"fetchPointer(): %x is not a reference.\n", target);
-		return NIL;
-	}
-	
-	if(outOfBounds(target,index,SZ_PT)){
-		msg_print(NULL, V_ERROR,
-			"fetchPointer(): %x is out of bounds.\n", index);
-		return NIL;
-	}
+	if(check(target, index, sizeof(Object_pt))) return NIL; // fail
 	
 	data_pt = (Object_pt*)objectOf(target)->data;
 	return data_pt[index];
@@ -308,15 +320,7 @@ Object_pt fetchPointer(Object_pt target, umax index){
 void storePointer(Object_pt target, umax index, Object_pt value){
 	Object_pt *data_pt;
 	
-	if(!isRef(target)){
-		msg_print(NULL, V_ERROR, "storePointer(): %x not a ref.\n", target);
-		return;
-	}
-	
-	if(outOfBounds(target,index,SZ_PT)){
-		msg_print(NULL, V_ERROR, "storePointer(): %x is out of bounds.\n", index);
-		return;
-	}
+	if(check(target, index, sizeof(Object_pt))) return; // fail
 	
 	data_pt = (Object_pt*)objectOf(target)->data;
 	
@@ -325,6 +329,29 @@ void storePointer(Object_pt target, umax index, Object_pt value){
 	data_pt[index] = value;
 	incRefsTo(value);
 }
+
+umax fetchUmax(Object_pt target, umax index){
+	umax *data_pt;
+	
+	if(check(target, index, sizeof(umax))) return NIL;
+	
+	data_pt = (umax*)objectOf(target)->data;
+	return data_pt[index];
+}
+
+void storeUmax(Object_pt target, umax index, umax value){
+	Object_pt *data_pt;
+	
+	if(check(target, index, sizeof(umax))) return; // fail
+	
+	data_pt = (umax*)objectOf(target)->data;
+	
+	if( isRef(data_pt[index]) ) decRefsTo(data_pt[index]);
+	
+	data_pt[index] = value;
+	incRefsTo(value);
+}
+
 
 /****************************** PRIMITIVE TYPES *******************************/
 
