@@ -79,21 +79,23 @@ flex_c := $(srcdir)/dyn.l.c
 flex_o := dyn.l.o
 omem_o := object_mem.o
 parse_o:= dynParser.o
-c_o    := string_table.o syms.o
+syms_o := syms.o
+c_o    := string_table.o
 cpp_o  := gen-pexe.o
 
-tests:=testMemory testScanner testParser
+tests:=testMemory testScanner testParser testSyms
 
 
 # Prefix the object files
 flex_o :=$(addprefix $(WORKDIR)/, $(flex_o))
 omem_o :=$(addprefix $(WORKDIR)/, $(omem_o))
 parse_o:=$(addprefix $(WORKDIR)/, $(parse_o))
+syms_o :=$(addprefix $(WORKDIR)/, $(syms_o))
 c_o    :=$(addprefix $(WORKDIR)/, $(c_o))
 cpp_o  :=$(addprefix $(WORKDIR)/, $(cpp_o))
 
 
-c_o += $(omem_o) $(parse_o)
+c_o += $(omem_o) $(parse_o) $(syms_o)
 
 
 ################################### TARGETS ####################################
@@ -117,6 +119,10 @@ testScanner: $(srcdir)/testScanner.c $(flex_o)
 
 testParser:$(srcdir)/testParser.c $(parse_o)
 	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_o) $(flex_o)
+	chmod +x $@
+
+testSyms: $(srcdir)/testSyms.c $(syms_o)
+	$(CC) $(CFLAGS) -o $@ $<  $(syms_o) -ldata -lmsg
 	chmod +x $@
 
 libppd.a: $(cpp_o) $(c_o) $(flex_o)
