@@ -13,16 +13,11 @@
 #ifndef _OBJECT_MEM_H
 #define _OBJECT_MEM_H
 
-#include <util/types.h>
+#include <ppd/types.h>
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
-
-
-typedef umax Object_pt;
-
-#define NIL ((Object_pt)0)
 
 
 void initObjectMem(void);

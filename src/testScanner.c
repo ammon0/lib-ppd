@@ -24,7 +24,10 @@ int main(int argc, char** argv){
 	msg_set_verbosity(V_TRACE);
 	msg_print(NULL, V_DEBUG, "main():start\n");
 	
-	argc = argc; // prevent complaints
+	if(argc != 2){
+		msg_print(NULL, V_ERROR, "testScanner takes one argument\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	msg_print(NULL, V_INFO, "number of bytecodes: %d.\n", NUM_TOKENS);
 	

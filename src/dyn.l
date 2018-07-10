@@ -139,13 +139,16 @@ GET  return T_GET;
 SET  return T_SET;
 
  /* stack instructions */
-PUSHF return T_PUSHF; // push a receiver field onto the stack
-PUSHT return T_PUSHT; // push a temp onto the stack
-PUSHC return T_PUSHC; // push a constant onto the stack
+	/*PUSHF return T_PUSHF; // push a receiver field onto the stack
+	PUSHT return T_PUSHT; // push a temp onto the stack
+	PUSHC return T_PUSHC; // push a constant onto the stack */
+PUSH  return T_PUSH;
 PUSHR return T_PUSHR; // push the receiver onto the stack
 PUSHX return T_PUSHX; // push the active context
+ /*
 POPT  return T_POPT;  // pop a temp off the stack
 POPF  return T_POPF;  // pop a receiver field off the stack
+ */
 POP   return T_POP;   // pop stack top
 DUP   return T_DUP;   // duplicate the stack top
 

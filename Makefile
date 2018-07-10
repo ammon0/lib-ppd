@@ -72,26 +72,28 @@ prv_headers:=$(wildcard $(srcdir)/*.hpp) $(wildcard $(srcdir)/*.h)
 
 allfiles:= $(headers) $(cpp_sources) $(c_sources) $(prv_headers)
 
+flex_l := $(srcdir)/dyn.l
+flex_c := $(srcdir)/dyn.l.c
+
 # Object files
-flex_objects :=dyn.l.o
-omem_objects :=object_mem.o
-pexe_objects :=string_table.o gen-pexe.o
-parse_objects:=dynParser.o
+flex_o := dyn.l.o
+omem_o := object_mem.o
+parse_o:= dynParser.o
+c_o    := string_table.o syms.o
+cpp_o  := gen-pexe.o
 
 tests:=testMemory testScanner testParser
 
 
 # Prefix the object files
-flex_objects  :=$(addprefix $(WORKDIR)/, $(flex_objects))
-omem_objects  :=$(addprefix $(WORKDIR)/, $(omem_objects))
-pexe_objects  :=$(addprefix $(WORKDIR)/, $(pexe_objects))
-parse_objects :=$(addprefix $(WORKDIR)/, $(parse_objects))
+flex_o :=$(addprefix $(WORKDIR)/, $(flex_o))
+omem_o :=$(addprefix $(WORKDIR)/, $(omem_o))
+parse_o:=$(addprefix $(WORKDIR)/, $(parse_o))
+c_o    :=$(addprefix $(WORKDIR)/, $(c_o))
+cpp_o  :=$(addprefix $(WORKDIR)/, $(cpp_o))
 
-#tests:=$(addprefix $(WORKDIR)/, $(tests))
 
-
-cpp_objects:= $(pexe_objects)
-c_objects  := $(omem_objects) $(parse_objects)
+c_o += $(omem_o) $(parse_o)
 
 
 ################################### TARGETS ####################################
@@ -105,40 +107,39 @@ debug: $(tests) $(pexe_objects)
 ################################# PRODUCTIONS ##################################
 
 
-# working directory
-$(WORKDIR):
-	mkdir -p $@
+testMemory: $(srcdir)/testMemory.c $(omem_o)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_o)
+	chmod +x $@
 
-$(cpp_objects): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WORKDIR)
+testScanner: $(srcdir)/testScanner.c $(flex_o)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_o)
+	chmod +x $@
+
+testParser:$(srcdir)/testParser.c $(parse_o)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_o) $(flex_o)
+	chmod +x $@
+
+libppd.a: $(cpp_o) $(c_o) $(flex_o)
+	ar rcs $@ $(cpp_o) $(c_o) $(flex_o)
+
+# objects
+
+$(cpp_o): $(WORKDIR)/%.o: $(srcdir)/%.cpp $(headers) $(prv_headers) | $(WORKDIR)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(c_objects): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
+$(c_o): $(WORKDIR)/%.o: $(srcdir)/%.c $(headers) $(prv_headers) | $(WORKDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-
-testMemory: $(srcdir)/testMemory.c $(omem_objects)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_objects)
-	chmod +x $@
-
-testScanner: $(srcdir)/testScanner.c $(flex_objects)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_objects)
-	chmod +x $@
-
-testParser:$(srcdir)/testParser.c $(parse_objects)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_objects) $(flex_objects)
-	chmod +x $@
-
-
-libppd.a: $(cpp_objects) $(c_objects) $(flex_objects)
-	ar rcs $@ $(cpp_objects) $(c_objects)
-
-
-$(WORKDIR)/dyn.l.o: $(srcdir)/dyn.l.c
+$(flex_o): $(flex_c)
 	$(CC) $(CFLAGS) -Wno-conversion -c -o $@ $<
 
-$(srcdir)/dyn.l.c: $(srcdir)/dyn.l
+$(flex_c): $(flex_l)
 	$(LEX) $(LFLAGS) -o $@ $<
 
+# misc
+
+$(WORKDIR):
+	mkdir -p $@
 
 docs: Doxyfile README.md $(allfiles)
 	doxygen Doxyfile
