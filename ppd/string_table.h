@@ -10,13 +10,14 @@
  ******************************************************************************/
 
 
-#ifndef _STRING_TABLE_HPP
-#define _STRING_TABLE_HPP
+#ifndef _STRING_TABLE_H
+#define _STRING_TABLE_H
 
 
 #include <util/types.h>
 
 typedef size_t str_dx; ///< indexes into the string_array
+typedef struct s_table * stable_pt;
 #define NULL_STRING ((str_dx) 0) ///< A null name
 
 
@@ -24,22 +25,12 @@ typedef size_t str_dx; ///< indexes into the string_array
 #define STRING_EXCEPTION_MEM 0 ///< Out of memory exception
 #define STRING_EXCEPTION_MAX 1 ///< Overflow Exception
 
-
-class String_Table{
-	char * array;
-	str_dx size;
-	str_dx next;
-	
-public:
-	 String_Table(void);
-	~String_Table(void);
-	
-	      str_dx add    (const char * name)      ;
-	const char * get    (const str_dx dx  ) const;
-	size_t       getSize(void             ) const;
-};
+/// pass NULL to initialize
+str_dx       stable_add (stable_pt table, const char * string);
+const char * stable_get (stable_pt table, const str_dx index );
+size_t       stable_size(stable_pt table                     );
 
 
-#endif // _STRING_TABLE_HPP
+#endif // _STRING_TABLE_H
 
 

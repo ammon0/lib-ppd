@@ -101,7 +101,7 @@ c_o += $(omem_o) $(parse_o)
 
 .PHONEY: docs debug install
 
-debug: $(tests) $(pexe_objects)
+debug: $(tests) $(c_o) $(cpp_o)
 
 
 ################################# PRODUCTIONS ##################################

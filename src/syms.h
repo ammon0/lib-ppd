@@ -21,46 +21,47 @@
 #define _SYMS_H
 
 #include <ppd/types.h>
-#include <ppd/string_table.hpp>
+//#include <ppd/string_table.h>
+#include <util/data.h>
 
 
-//#ifdef __cplusplus
-//	extern "C" {
-//#endif
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct{
 	Object_pt location;
 	umax      index;
-	str_dx    name;
+	char *    name;
 	bool      resolved;
 } symbol_record;
 
-/// Initialize the symbol table
-void sym_init(void);
+/// Initialize a symbol table
+DS sym_init(void);
 
-/// close the symboltable
-void sym_close(void);
+/// close a symboltable
+void sym_close(DS table);
 
 /**	Indicates to the loader that the given field (object/index) needs to fixedup to point to the object bound to name.
  */
-void sym_import(const char * name, Object_pt object, umax index);
+void sym_import(DS table, const char * name, Object_pt object, umax index);
 
 /**	Add the location of a known symbol to the table
  */
-void sym_export(const char * name, Object_pt object);
+void sym_export(DS table, const char * name, Object_pt object);
 
 /**	Search the symbol table for a needed object
  */
-Object_pt sym_search(const char *name);
+Object_pt sym_search(DS table, const char *name);
 
 /**	Removes and returns the first unresolved symbol record in the table
  */
-symbol_record sym_fixup(void);
+const symbol_record * sym_fixup(DS table);
 
 
-//#ifdef __cplusplus
-//	}
-//#endif
+#ifdef __cplusplus
+	}
+#endif
 
 #endif // _SYMS_H
 
