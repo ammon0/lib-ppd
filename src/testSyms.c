@@ -10,25 +10,41 @@
  ******************************************************************************/
 
 
-#include "syms.h"
-#include <util/msg.h>
+#include <ppd/syms.h>
+#include <ppd/debug.h>
 
 /*	There is a lot of testing I can't do without having some essential classes in the memory
  */
 
 int main (void){
-	
+	DS symbol_table;
+	symbol_record * rec;
 	
 	
 	msg_set_verbosity(V_TRACE);
 	
-	msg_print(NULL,V_INFO, "testSyms: start\n");
+	msg_trace(NULL, "main(): start\n");
+	
+	msg_trace(NULL, "main(): initialize the symbol table\n");
+	symbol_table = sym_init();
+	
+	msg_trace(NULL, "main(): inserting 'TestSymbol'\n");
+	sym_import(symbol_table, "TestSymbol", NIL, 110);
+	
+	msg_trace(NULL, "main(): calling fixup\n");
+	rec = sym_fixup(symbol_table);
+	
+	msg_trace(NULL, "main(): result of sym_fixup()\n");
+	sym_print(rec);
 	
 	
+	msg_trace(NULL, "main(): freeing name string\n");
+	free(rec->name);
 	
+	msg_trace(NULL, "main(): close the symbol table\n");
+	sym_close(symbol_table);
 	
-	
-	msg_print(NULL,V_INFO, "testSyms: stop\n");
+	msg_trace(NULL, "main(): stop\n");
 }
 
 

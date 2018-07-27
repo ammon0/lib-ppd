@@ -1,0 +1,33 @@
+Object
+	Number
+	|>	Integer
+	|		Signed
+	|			S8
+	|			S16
+	|			S32
+	|			S64
+	|			Sint
+	|			Smax
+	|		Unsigned
+	|			U8
+	|			U16
+	|			U32
+	|			U64
+	|			Uint
+	|			Umax
+	|		LargeInteger
+	|>	Float
+	|		F32
+	|		F64
+	|>	Fraction
+	Collection
+		Array
+			String
+		LinkList
+		HashTable
+		BinarySearchTree
+	Iterator
+	Class
+	Context
+	CompiledMethod
+	Pointer

@@ -53,7 +53,9 @@ CXXWARNINGS:=-Wall -Wextra -pedantic \
 
 DEBUG_OPT:=
 
-CFLAGS:=  --std=c11   -g $(CWARNINGS)   -I./ -I$(INCDIR) -L$(LIBDIR)/util
+clibs:= -ldata -lmsg
+
+CFLAGS:=  --std=c11   -g $(CWARNINGS)   -I./ -I$(INCDIR) -L$(LIBDIR)/util $(clibs)
 CXXFLAGS:=--std=c++14 -g $(CXXWARNINGS) -I./ -I$(INCDIR) -L$(LIBDIR)
 LFLAGS:=#-d
 LEX:= flex
@@ -80,8 +82,9 @@ flex_o := dyn.l.o
 omem_o := object_mem.o
 parse_o:= dynParser.o
 syms_o := syms.o
-c_o    := string_table.o
-cpp_o  := gen-pexe.o
+debug_o:= debug.o
+c_o    := debug.o #object_mem.o dynParser.o syms.o
+cpp_o  := gen-pexe.o load.o
 
 tests:=testMemory testScanner testParser testSyms
 
@@ -91,11 +94,12 @@ flex_o :=$(addprefix $(WORKDIR)/, $(flex_o))
 omem_o :=$(addprefix $(WORKDIR)/, $(omem_o))
 parse_o:=$(addprefix $(WORKDIR)/, $(parse_o))
 syms_o :=$(addprefix $(WORKDIR)/, $(syms_o))
+debug_o:=$(addprefix $(WORKDIR)/, $(debug_o))
 c_o    :=$(addprefix $(WORKDIR)/, $(c_o))
 cpp_o  :=$(addprefix $(WORKDIR)/, $(cpp_o))
 
 
-c_o += $(omem_o) $(parse_o) $(syms_o)
+c_o += $(omem_o) $(parse_o) $(syms_o) $(debug_o)
 
 
 ################################### TARGETS ####################################
@@ -103,6 +107,7 @@ c_o += $(omem_o) $(parse_o) $(syms_o)
 
 .PHONEY: docs debug install
 
+debug: CFLAGS += -DDEBUG -O0
 debug: $(tests) $(c_o) $(cpp_o)
 
 
@@ -110,15 +115,15 @@ debug: $(tests) $(c_o) $(cpp_o)
 
 
 testMemory: $(srcdir)/testMemory.c $(omem_o)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(omem_o)
+	$(CC) $(CFLAGS) -o $@ $<  $(omem_o) -lmsg
 	chmod +x $@
 
 testScanner: $(srcdir)/testScanner.c $(flex_o)
 	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_o)
 	chmod +x $@
 
-testParser:$(srcdir)/testParser.c $(parse_o)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(parse_o) $(flex_o)
+testParser:$(srcdir)/testParser.c $(flex_o) $(parse_o) $(debug_o)
+	$(CC) $(CFLAGS) -o $@ $< $(parse_o) $(flex_o) $(debug_o) -ldata -lmsg
 	chmod +x $@
 
 testSyms: $(srcdir)/testSyms.c $(syms_o)

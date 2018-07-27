@@ -45,59 +45,83 @@ typedef struct CompiledMethodHeader{
 
 */
 
-typedef enum byteCode{
+const uint8_t argCountShift       = 0;
+const uint8_t tempCountShift      = 5;
+const uint8_t constCountShift     = 10;
+const uint8_t primativeIndexShift = 16;
+
+const umax argCountMask       = 0X1F;
+const umax tempCountMask      = 0X1F;
+const umax constCountMask     = 0X3F;
+const umax primativeIndexMask = 0XFF;
+
+
+typedef enum ByteCode{
 /*	bytecode     ,  pattern args description */
 	b_nop        , ///< B   X	do nothing
 	
+	/* Send ByteCodes */
+	b_send       , ///< BBB *	send const selector with args
+	b_send_super , ///< BBB *	send const selector to superClass with args
+	
 	/* Stack Bytecodes */
-	b_push_field , ///< BB  X	push a receiver field
-	b_push_temp  , ///< BB  X	push a temp
+	b_push_arg   , ///< BB  X	push an argument
 	b_push_const , ///< BB  X	push a constant
+	b_push_temp  , ///< BB  X	push a temp
 	b_push_rec   , ///< B   X	push the receiver
 	b_push_active, ///< B   X	push the active context
 	
 	b_pop        , ///< B   X	pop
 	
-	b_store_field, ///< BB  X	store the stack top in a receiver field
+	//b_store_field, ///< BB  X	store the stack top in a receiver field
 	b_store_temp , ///< BB  X	store the stack top in a temp variable
-	
-	/* Return Bytecodes */
-	b_return     , ///< B   X	stack top is return value
 	
 	/* Jump Bytecodes */
 	b_jump       , ///< BB  X	unconditional jump
 	b_jump_true  , ///< BB  X	pop and jump if stack top is true
 	b_jump_false , ///< BB  X	pop and jump if stack top is false
 	
-	/* Send ByteCodes */
-	b_send       , ///< BBB *	send const selector with args
-	b_send_super , ///< BBB *	send const selector to superClass with args
-	
-	b_send_add   , ///< B   1	
-	b_send_sub   , ///< B   1	
-	b_send_mul   , ///< B   1	
-	b_send_div   , ///< B   1	
-	b_send_mod   , ///< B   1	
-	b_send_shift , ///< B   1	
-	b_send_rotate, ///< B   1	
-	b_send_and   , ///< B   1	
-	b_send_or    , ///< B   1	
-	b_send_lt    , ///< B   1	
-	b_send_gt    , ///< B   1	
-	b_send_lte   , ///< B   1	
-	b_send_gte   , ///< B   1	
-	b_send_eq    , ///< B   1	
-	b_send_neq   , ///< B   1	
-	
-	b_send_type  , ///< B   0	
-	b_send_copy  , ///< B   0	
-	b_send_new   , ///< B   0	
-	b_send_newc  , ///< B   1	
-	b_send_get   , ///< B   1	
-	b_send_set   , ///< B   1	
-	b_send_same  , ///< B   0	whether two pointers on stack top are the same
+	/* Return Bytecodes */
+	b_return     , ///< B   X	stack top is return value
 	b_NUM
 } ByteCode;
+
+typedef enum PrimativeMethod{
+	p_add, // Integer +
+	p_sub, // Integer -
+	p_mul, // Integer *
+	p_div, // Integer /
+	/* primative division creates both the quotient and remainder. It is up to
+	higher level operations to decide which to keep */
+	
+	p_lsh,
+	p_rsh,
+	p_sha,
+	p_rol,
+	p_ror,
+	
+	p_and,
+	p_or ,
+	p_xor,
+	p_not,
+	
+	p_lt ,
+	p_gt ,
+	p_lte,
+	p_gte,
+	p_eq ,
+	p_neq,
+	
+	p_type,
+	p_size,
+	p_get ,
+	p_set ,
+	
+	p_copy,
+	p_newc,
+	
+	p_NUM
+} PrimativeMethod;
 
 
 /******************************************************************************/

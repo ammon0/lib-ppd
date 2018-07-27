@@ -42,8 +42,7 @@ DS sym_init(void);
 /// close a symboltable
 void sym_close(DS table);
 
-/**	Indicates to the loader that the given field (object/index) needs to be
-	fixedup to point to the object bound to name.
+/**	Indicates to the loader that the given field (object/index) needs to fixedup to point to the object bound to name.
  */
 void sym_import(DS table, const char * name, Object_pt object, umax index);
 

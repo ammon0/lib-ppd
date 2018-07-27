@@ -53,63 +53,60 @@ typedef enum{
 	T_CPAR,
 	T_IS,   // declares initial value
 	T_METH, // indicates begining of methods section
+	T_TEMP, // declare number of temps, start bytecodes section
 	
-	// send instructions
+	// Bytecodes
 	T_SEND,  // send constant selector with j arguments
 	T_SENDS, // send constant selector to superClass with j arguments
 	
-	// arithmetic messages
-	T_ADD,
-	T_SUB,
-	T_MUL,
-	T_DIV,
-	T_MOD,
-	T_LSH,
-	T_RSH,
-	T_SHA,
-	T_ROL,
-	T_ROR,
-	
-	T_AND,
-	T_OR,
-	T_NOT,
-	T_LT,
-	T_GT,
-	T_LTE,
-	T_GTE,
-	T_EQ,
-	T_NEQ,
-	
-	// special messages
-	T_TYPE, // 0, replace object on stack top with its type
-	T_COPY, // 0, replace object on stack top with a shallow copy
-	T_NEW , // 0, replace type object on stack top with an instance
-	T_NEWC, // 1, re
-	T_GET , // 1, 
-	T_SET , // 2, 
-	
-	// stack bytecodes
-//	T_PUSHF, // push a receiver field onto the stack
-//	T_PUSHT, // push a temp onto the stack
-//	T_PUSHC, // push a constant onto the stack
-	T_PUSH,  
+	T_PUSHA, // push a method argument
+	T_PUSHC, // push a constant
+	//T_PUSHF, // push a receiver field
+	T_PUSHT, // push a temp variable
 	T_PUSHR, // push the receiver onto the stack
 	T_PUSHX, // push the active context
 	
-//	T_POPT,  // pop a temp off the stack
-//	T_POPF,  // pop a receiver field off the stack
-	T_POP,   // pop stack top
-	T_DUP,   // duplicate the stack top
+	T_POP, // pop stack top
 	
-	// jump bytecodes
+	//T_STF, // store in a receiver field
+	T_STT, // store in a temp
+	
 	T_JMP, // unconditional relative jump
 	T_JT,  // relative jump on true
 	T_JF,  // relative jump on false
 	
-	// return bytecodes
 	T_RETS, // return the stack top
-	T_RETR, // return the receiver
-	T_RETC, // return a constant
+	
+	
+	// primative operations
+	T_ADD, // 1
+	T_SUB, // 1
+	T_MUL, // 1
+	T_DIV, // 1
+	T_MOD, // 1
+	T_LSH, // 1
+	T_RSH, // 1
+	T_SHA, // 1
+	T_ROL, // 1
+	T_ROR, // 1
+	
+	T_AND, // 1
+	T_OR , // 1
+	T_NOT, // 1
+	T_LT , // 1, return boolean
+	T_GT , // 1, return boolean
+	T_LTE, // 1, return boolean
+	T_GTE, // 1, return boolean
+	T_EQ , // 1, return boolean
+	T_NEQ, // 1, return boolean
+	
+	T_TYPE, // 0, return receiver type
+	T_COPY, // 0, return receiver copy
+	T_NEW , // 0, return receiver instance
+	T_NEWC, // 1, return receiver instance with x indexed variables
+	T_GET , // 1, return receiver field
+	T_SET , // 2, set receiver field
+	
 	NUM_TOKENS
 } token_t;
 
@@ -126,10 +123,11 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		// Formatting
 		"T_EOF  ",
 		"T_NL   ",
-		// Primary
+		// Contstants
 		"T_INT  ",
 		"T_STR  ",
 		"T_NAME ",
+		// Declarations
 		"T_COLO ",
 		"T_OBRC ",
 		"T_CBRC ",
@@ -139,8 +137,26 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_CPAR ",
 		"T_IS   ",
 		"T_METH ",
+		"T_TEMP ",
+		// Bytecodes
 		"T_SEND ",
 		"T_SENDS",
+		
+		"T_PUSHA",
+		"T_PUSHC",
+		"T_PUSHT",
+		"T_PUSHR",
+		"T_PUSHX",
+		"T_POP  ",
+		"T_STT  ",
+		
+		"T_JMP  ",
+		"T_JT   ",
+		"T_JF   ",
+		
+		"T_RETS ",
+		// Primative Operations
+		
 		"T_ADD  ",
 		"T_SUB  ",
 		"T_MUL  ",
@@ -162,23 +178,12 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_EQ   ",
 		"T_NEQ  ",
 		
-		"T_CLASS",
+		"T_TYPE ",
 		"T_COPY ",
-		
-		"PUSH ",
-		"PUSH RECVR",
-		"PUSH TEMP",
-		"POP  ",
-		
-		"JMP  ",
-		"JMP ifT",
-		"JMP ifF",
-		
-		"RET STACK",
-		"RET RECVR",
-		"RET TRUE ",
-		"RET FALSE",
-		"RET NULL "
+		"T_NEW  ",
+		"T_NEWC ",
+		"T_GET  ",
+		"T_SET  "
 	}
 #endif // _GLOBALS_C
 ;

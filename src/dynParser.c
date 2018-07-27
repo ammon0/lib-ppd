@@ -11,7 +11,9 @@
 
 
 #include "dyn.h"
-#include <util/msg.h>
+#include "objects.h"
+#include <ppd/debug.h>
+#include <ppd/syms.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -22,14 +24,17 @@
 
 
 token_t token;
-char err_array[100];
 
-log_descriptor parseLog = NULL;
+DS syms;
 
 uint8_t *byteBuffer;
 size_t  bufferSize, ip;
 
 #define BUF_SZ 1024
+
+struct current_class{
+	
+}
 
 
 /******************************************************************************/
@@ -43,44 +48,32 @@ static inline void getNext(void){
 
 /************************ ERROR REPORTING & RECOVERY **************************/
 
-static inline void parse_crit(const char * message){
-	msg_print(parseLog, V_ERROR, "CRITICAL: %u: %s.\n",
-		yylineno, message
-	);
-	exit(EXIT_FAILURE);
-}
 
 static inline void parse_error(const char * message){
-/*	msg_print(parseLog, V_ERROR, "%u: %s.\n", yylineno, message);*/
-/*	*/
-/*	//while(token != T_EOF && token != T_NL) getNext();*/
-/*	msg_print(parseLog, V_ERROR, "exiting...\n");*/
-/*	exit*/
-	parse_crit(message);
+	error("%u: %s.\n", yylineno, message);
+}
+
+static inline void parse_warn(const char * message){
+	warn("%u: %s.\n", yylineno, message);
 }
 
 static inline void expected(const char* thing){
-	// FIXME: this is not a safe use of sprintf
-	sprintf(err_array, "Expected '%s', found %s: '%s'",
+	error("Expected '%s', found %s: '%s'",
 		thing,
 		token_dex[token],
 		yytext
 	);
-	parse_error(err_array);
-}
-
-static inline void parse_warn(const char * message){
-	msg_print(parseLog, V_WARN, "%u: %s.\n", yylineno, message);
 }
 
 /********************************* GETTERS ************************************/
 
-static inline bool match_string(const char * string){
+static inline RETURN match_string(const char * string){
 	if ( strcmp(string, yytext) ){
 		expected(string);
+		return r_failure;
 	}
 	getNext();
-	return true;
+	return r_success;
 }
 
 static inline void match_token(token_t t){
@@ -90,23 +83,25 @@ static inline void match_token(token_t t){
 
 /******************************* BYTECODE BUFFER ******************************/
 
-static void initBuffer(void){
+static RETURN initBuffer(void){
 	byteBuffer = malloc(BUF_SZ);
 	if(!byteBuffer){
-		msg_print(parseLog, V_ERROR, "initBuffer(): out of memory.\n");
-		exit(EXIT_FAILURE);
+		error("initBuffer(): out of memory.\n");
+		return r_failure;
 	}
 	bufferSize = BUF_SZ;
 	ip = 0;
+	return r_success;
 }
 
-static inline void growBuffer(void){
+static inline RETURN growBuffer(void){
 	bufferSize <<=1;
 	byteBuffer = realloc(byteBuffer, bufferSize);
 	if(!byteBuffer){
-		msg_print(parseLog, V_ERROR, "initBuffer(): out of memory.\n");
-		exit(EXIT_FAILURE);
+		error("growBuffer(): out of memory.\n");
+		return r_failure;
 	}
+	return r_success;
 }
 
 static void addByte(uint8_t b){
@@ -187,11 +182,16 @@ static void instructions(void){
 		case T_SET : simpleInstruction(); break;
 		
 		// stack instructions
-		case T_PUSH :
+		//case T_PUSH :
+		case T_PUSHA:
+		case T_PUSHC:
 		case T_PUSHR:
+		case T_PUSHT:
 		case T_PUSHX:
 		case T_POP  :
-		case T_DUP  : simpleInstruction(); break;
+		case T_STT  :
+		
+		//case T_DUP  : simpleInstruction(); break;
 		
 		// jump instructions
 		case T_JMP:
@@ -200,8 +200,8 @@ static void instructions(void){
 		
 		// return instructions
 		case T_RETS:
-		case T_RETR: simpleInstruction(); break;
-		case T_RETC: frameInstruction(); break;
+		//case T_RETR: simpleInstruction(); break;
+		//case T_RETC: frameInstruction(); break;
 		
 		// errors
 		case T_INT :
@@ -216,6 +216,7 @@ static void instructions(void){
 		case T_CPAR:
 		case T_IS:   // declares initial value
 		case T_METH: // indicates begining of methods section
+		case T_TEMP:
 		case T_EOF : // yyterminate returns a 0 automatically
 		case T_NL  :
 		case NUM_TOKENS:
@@ -241,7 +242,7 @@ static void fieldInit(void){
 }
 
 static void staticType(void){
-	msg_print(parseLog, V_TRACE, "staticType(): start\n");
+	trace("staticType(): start\n");
 	
 	match_token(T_OPAR);
 	
@@ -252,7 +253,7 @@ static void staticType(void){
 	
 	match_token(T_CPAR);
 	
-	msg_print(parseLog, V_TRACE, "staticType(): stop\n");
+	trace("staticType(): stop\n");
 }
 
 static void argList(void){
@@ -272,7 +273,7 @@ static void argList(void){
 
 
 static void Fields(void){
-	msg_print(parseLog, V_TRACE, "Fields(): start\n");
+	trace("Fields(): start\n");
 	
 	while(token != T_METH){
 		if(token == T_NL){ // empty declaration
@@ -288,11 +289,11 @@ static void Fields(void){
 		match_token(T_NL);
 	}
 	
-	msg_print(parseLog, V_TRACE, "Fields(): stop\n");
+	trace("Fields(): stop\n");
 }
 
 static void Methods(void){
-	msg_print(parseLog, V_TRACE, "Methods(): start\n");
+	trace("Methods(): start\n");
 	
 	while(token != T_CBRC){
 		if(token == T_NL){ // empty declaration
@@ -300,7 +301,7 @@ static void Methods(void){
 			continue;
 		}
 		
-		msg_print(parseLog, V_TRACE, "%d: method\n", yylineno);
+		trace("%d: method\n", yylineno);
 		
 		if(token == T_OPAR) staticType();
 		
@@ -315,13 +316,15 @@ static void Methods(void){
 		
 	}
 	
-	msg_print(parseLog, V_TRACE, "Methods(): stop\n");
+	trace("Methods(): stop\n");
 }
 
 
-void objectParser(void){
+void objectParser(DS symbol_table){
 	
-	msg_print(parseLog, V_DEBUG, "objectParser(): start\n");
+	debug("objectParser(): start\n");
+	
+	syms = symbol_table;
 	
 	getNext(); // initialize the token
 	
@@ -342,7 +345,7 @@ void objectParser(void){
 	
 	match_token(T_CBRC);
 	
-	msg_print(parseLog, V_DEBUG, "objectParser(): stop\n");
+	debug("objectParser(): stop\n");
 }
 
 

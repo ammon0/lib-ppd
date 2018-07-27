@@ -47,11 +47,7 @@ typedef enum PrimativeType{
 
 /********************************** OBJECTS ***********************************/
 
-typedef struct Object{
-	Object_pt type  ; // the class of the object
-	umax      size  ; // bytes of data in object
-	uint8_t   data[]; // the object's data
-} Object;
+#include "objects.h"
 
 /******************************** OBJECT TABLE ********************************/
 
