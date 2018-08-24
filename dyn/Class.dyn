@@ -5,7 +5,7 @@
 ##############################################################################
 
 
-Class:Class{
+Class Class{
 	(Class) superClass IS Object
 	(Dictionary)methodDictionary
 	instanceSpec # integer with bitfields

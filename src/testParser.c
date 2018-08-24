@@ -12,12 +12,14 @@
 
 #include "dyn.h"
 
+#include <ppd/object_mem.h>
 #include <util/msg.h>
 
 #include <stdlib.h>
 
 
 int main(int argc, char** argv){
+	DS symbols;
 	
 	msg_set_verbosity(V_TRACE);
 	msg_print(NULL, V_DEBUG, "main():start\n");
@@ -27,11 +29,16 @@ int main(int argc, char** argv){
 		exit(EXIT_FAILURE);
 	}
 	
+	initObjectMem();
+	symbols = sym_init();
+	
 	//msg_print(NULL, V_INFO, "number of bytecodes: %d.\n", NUM_TOKENS);
 	
 	yyin = fopen(argv[1], "r");
 	
-	objectParser();
+	dynParser(symbols);
+	
+	sym_close(symbols);
 	
 	msg_print(NULL, V_DEBUG, "main():stop\n");
 	return EXIT_SUCCESS;

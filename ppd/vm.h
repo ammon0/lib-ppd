@@ -87,6 +87,7 @@ typedef enum ByteCode{
 } ByteCode;
 
 typedef enum PrimativeMethod{
+	p_none=0,
 	p_add, // Integer +
 	p_sub, // Integer -
 	p_mul, // Integer *
@@ -118,7 +119,7 @@ typedef enum PrimativeMethod{
 	p_set ,
 	
 	p_copy,
-	p_newc,
+	p_new,
 	
 	p_NUM
 } PrimativeMethod;
@@ -176,7 +177,7 @@ static inline Object_pt instanceSpec(Object_pt typePointer){
 }
 
 static inline umax fieldWidth(Object_pt instanceSpec){
-	return (1<<((instanceSpec>>fieldWidthShift)&fieldWidthMask));
+	return ((umax)1<<((instanceSpec>>fieldWidthShift)&fieldWidthMask));
 }
 
 

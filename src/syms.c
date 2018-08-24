@@ -13,8 +13,9 @@
 #include <ppd/syms.h>
 #include <ppd/debug.h>
 
-#include <string.h>
+#include <util/string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 
 
@@ -29,14 +30,18 @@ static inline imax cmp_str(const void * left, const void * right){
 
 static inline char * cpy_str(const char * string){
 	char * temp;
+	size_t size;
 	
-	temp = malloc(strlen(string));
-	if(!temp){
-		msg_print(NULL, V_ERROR, "cpy_str(): out of memory\n");
-		exit(EXIT_FAILURE);
-	}
+	size = strlen(string)+1; // +1 for the null
 	
-	strncpy(temp, string, strlen(string));
+	temp = malloc(size);
+	assert(temp);
+/*	if(!temp){*/
+/*		msg_print(NULL, V_ERROR, "cpy_str(): out of memory\n");*/
+/*		exit(EXIT_FAILURE);*/
+/*	}*/
+	
+	assert(strlcpy(temp, string, size) < size);
 	return temp;
 }
 
@@ -69,11 +74,11 @@ void sym_import(DS table, const char * name, Object_pt object, umax index){
 	template.name     = cpy_str(name);
 	template.resolved = false;
 	
-	#ifdef DEBUG
-		msg_print(NULL, V_DEBUG,
-			"sym_import(): print symbol_record before insertion\n");
-		sym_print(&template);
-	#endif
+/*	#ifdef DEBUG*/
+/*		msg_print(NULL, V_DEBUG,*/
+/*			"sym_import(): print symbol_record before insertion\n");*/
+/*		sym_print(&template);*/
+/*	#endif*/
 	
 	DS_insert(table, &template);
 	
@@ -110,7 +115,8 @@ Object_pt sym_search(DS table, const char *name){
 
 
 const symbol_record * sym_fixup(DS table){
-	symbol_record * result, *second;
+	symbol_record * result;
+	const symbol_record *second;
 	
 	msg_trace(NULL, "sym_fixup(): start\n");
 	
@@ -158,7 +164,7 @@ const symbol_record * sym_fixup(DS table){
 }
 
 
-void sym_print(symbol_record *rec){
+void sym_print(const symbol_record *rec){
 	msg_print(NULL, V_DEBUG, "\n\t\tRecord name  : '%s'\n\t\tRecord status: %s\n\t\tObject_pt    : %p\n\t\tIndex        : %u\n",
 		rec->name,
 		rec->resolved? "resolved": "unresolved",

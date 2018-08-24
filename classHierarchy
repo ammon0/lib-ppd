@@ -26,8 +26,10 @@ Object
 		LinkList
 		HashTable
 		BinarySearchTree
+	Character
 	Iterator
 	Class
 	Context
 	CompiledMethod
 	Pointer
+	LexicalScanner

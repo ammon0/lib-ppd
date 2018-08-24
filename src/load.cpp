@@ -14,8 +14,12 @@
 #include <ppd/debug.h>
 #include <ppd/syms.h>
 
-#include <stdio.h>
-#include <string.h>
+
+#include <util/string.h>
+#include <util/io.h>
+
+#include <assert.h>
+
 
 
 #define BUF_EXTRA 10
@@ -31,7 +35,7 @@ static void process_dyn(FILE * infile){
 }
 
 
-Object_pt load(const char * top_level_object){
+static Object_pt load(const char * top_level_object){
 	char * file_name, *object_name;
 	size_t object_name_sz, file_name_sz;
 	FILE * file;
@@ -42,7 +46,7 @@ Object_pt load(const char * top_level_object){
 	
 	file_name_sz = FILE_NAME_START;
 	file_name    = (char*)malloc(file_name_sz);
-	// TODO: check memory allocation
+	assert(file_name);
 	
 	object_name = (char*)top_level_object;
 	
@@ -55,18 +59,15 @@ Object_pt load(const char * top_level_object){
 			file_name_sz = object_name_sz + BUF_EXTRA;
 			free(file_name);
 			file_name = (char*)malloc(file_name_sz);
-			// TODO: check memory allocation
+			assert(file_name);
 		}
 		
 		
 		// check for a pexe file
-		
-		strncpy(file_name, object_name, file_name_sz+1); // +1 for the null
-		strncat(file_name, ".pexe", 6);
+		assert(strlcpy(file_name, object_name, file_name_sz) < file_name_sz);
+		assert(strlcat(file_name, ".pexe", file_name_sz) < file_name_sz);
 		
 		file = fopen(file_name, "r");
-		
-		
 		
 		// process pexe file
 		if(file) {
@@ -75,8 +76,8 @@ Object_pt load(const char * top_level_object){
 		}
 		
 		// check for dyn file
-		strncpy(file_name, object_name, file_name_sz+1); // +1 for the null
-		strncat(file_name, ".dyn", 5);
+		assert(strlcpy(file_name, object_name, file_name_sz) < file_name_sz);
+		assert(strlcat(file_name, ".dyn", file_name_sz) < file_name_sz);
 		
 		file = fopen(file_name, "r");
 		

@@ -18,7 +18,7 @@
 
 int main (void){
 	DS symbol_table;
-	symbol_record * rec;
+	const symbol_record * rec;
 	
 	
 	msg_set_verbosity(V_TRACE);

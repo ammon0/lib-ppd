@@ -13,7 +13,7 @@
 #include <util/data.h>
 #include <util/msg.h>
 
-#include <string.h>
+#include <util/string.h>
 
 static inline const void * lbl_name(const void * obj){
 	return (*(lbl_pt*)obj)->get_name();

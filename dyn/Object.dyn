@@ -7,7 +7,7 @@
 
 # an instance of Class called Object
 # being the root of the superClass tree, Object has no superClass
-Class:Object{
+Class Object{
 	(Class) superClass IS nil
 	methodDictionary
 	instanceSpec
@@ -39,23 +39,28 @@ METHODS
 	
 	########################### TEST FUNCTIONALITY #############################
 	
-	(Class) type () {
-		# receiver is on top of the stack
-		TYPE # put the receiver's type pointer on top of the stack
-		RETS # return the stack top
-	}
+	(Class) type() { PRIMATIVE TYPE } # TYPE never fails
 	
-	(Bool) isKindOf  ((Class)aClass) {}
+	(Bool) isKindOf  ((Class)aClass) {
+		TEMP receiverType
+		
+		# get the receiverType
+		PUSHR
+		SEND 0 "type"
+		STORET 0
+		
+		# receiverType is still on top of the stack
+		PUSHA 0
+		SEND 1 "=="
+		
+	}
 	(Bool) isMemberOf((Class)aClass) {}
 	(Bool) respondsTo((Symbol)aSymbol) {}
 	
 	############################### COMPARE TO #################################
 	
 	(Bool) == ((Object) anObject){  # identity
-		PUSHR   # push self
-		PUSHT 0 # push the first argument
-		EQ      # test for equality of the pointers
-		RETS
+		PRIMATIVE EQ
 	}
 	
 	(Bool) = ((Object) anObject){  # equivalency
@@ -68,9 +73,9 @@ METHODS
 	
 	################################# COPYING ##################################
 	
-	(Object) shallowCopy (){
-		COPY # create a shallow copy of the stack top
-		RETS # return it
+	(Object) shallowCopy(){
+		PRIMATIVE COPY
+		# COPY fails if out of memory
 	}
 	
 	(Object) deepCopy (){
@@ -80,24 +85,26 @@ METHODS
 	
 	# accessing
 	(Object) getIndex (index){ # all objects are just arrays
-		PUSHT 0 # push index onto the stack
-		GET     # get the value on the stack
-		RETS    # return the stack top
+		PRIMATIVE GET
+		# GET may fail if the index is out of bounds
 	}
 	
 	(Object) setIndex (index value){
-		PUSHT value # push value onto the stack
-		PUSHT index # push index onto the stack
-		SET
-		RETS
+		PRIMATIVE SET #set may fail if the index is out of bounds
 	}
 	
-	(uint) size (){
-		
+	(uint) size(){
+		PRIMATIVE SIZE # SIZE does not fail
 	}
 	
 	# printing
-	(String) toString() {}
+	(String) toString() {
+		TEMP (String) string
+		TEMP (Class) type
+		
+		PUSHT 0        # push String onto the stack
+		SEND  1 "new" # send "new" to String
+	}
 }
 
 

@@ -13,15 +13,20 @@
 
 #define _DYN_L
 #include "dyn.h"
-#include <stdio.h>
-#include <util/msg.h>
+#include <util/io.h>
+#include <util/types.h>
+#include <ppd/debug.h>
 
 
 /// Report errors in the scanner
-static inline void scan_error(const char * message){
-	msg_print(NULL, V_ERROR, "scanner: %s, on line %d\n", message, yylineno);
-}
+//static inline void scan_error(const char * message){
+//	error("scanner: %s, on line %d\n", message, yylineno);
+//}
 
+imax yyval;
+
+static void read_hex(void);
+static void read_dec(void);
 
 %}
 
@@ -34,20 +39,19 @@ static inline void scan_error(const char * message){
 
 /* keep track of the line number in yylineno
  turn on warnings
- have a start condition stack
  */
-%option yylineno warn 
+%option yylineno warn
 
 %x STRING
-/*%s METHODS */
+
 
 DIGIT  [0-9]
 LETTER [A-Za-z_]
+HEX    [a-fA-F0-9]
 WHTSPC [ \t\v]
 NL     (\r|\r\n|\n)
 OP     [!@$%^&*/\-+=<>|~?]
 
-HEX    0[xX]({DIGIT}|[a-fA-F])+
 
 NAME   {LETTER}({DIGIT}|{LETTER})*
 
@@ -69,19 +73,11 @@ NEWL   ({WHTSPC})*({NL})
 ({WHTSPC})  {} // ignore all other whitespace
 
 
-<INITIAL><<EOF>> {
-	// if this file was an include, will return to
-	// previous point. pops and delete's buffer. see <INCLUDE>
-	yypop_buffer_state();
-	// if we are at the end of the top-level buffer then we are done.
-	if ( !YY_CURRENT_BUFFER ) yyterminate();
-}
+<INITIAL><<EOF>> yyterminate();
 
 
 <STRING><<EOF>> {
-	msg_print(NULL, V_ERROR, 
-		"End of file encountered before closing quotation\n"
-	);
+	error("End of file encountered before closing quotation\n");
 }
 
  /******************************* COMMENTS ************************************/
@@ -90,7 +86,7 @@ NEWL   ({WHTSPC})*({NL})
 
  /******************************* DECLARATIONS ********************************/
 
-:    return T_COLO;
+ /*:    return T_COLO;*/
 	/*\<   return T_OTYPE;
 	\>   return T_CTYPE; */
 \{   return T_OBRC;
@@ -99,15 +95,17 @@ NEWL   ({WHTSPC})*({NL})
 \)   return T_CPAR;
 
 
-IS      return T_IS;
-METHODS {
-	//BEGIN(METHODS);
-	return T_METH;
-}
+IS        return T_IS;
+METHODS   return T_METH;
+PRIMATIVE return T_PRIM;
 
-TEMPS return T_TEMP;
+TEMP return T_TEMP;
 
  /********************************* BYTECODES *********************************/
+
+ /* send instructions */
+SEND  return T_SEND;
+SENDS return T_SENDS;
 
  /* stack instructions */
 PUSHA return T_PUSHA; // push an argument
@@ -115,10 +113,9 @@ PUSHC return T_PUSHC; // push a constant onto the stack
 PUSHT return T_PUSHT; // push a temp onto the stack
 PUSHR return T_PUSHR; // push the receiver onto the stack
 PUSHX return T_PUSHX; // push the active context
- /*
-POPT  return T_POPT;  // pop a temp off the stack
-POPF  return T_POPF;  // pop a receiver field off the stack
- */
+
+STORET return T_STT; // store stack top in temporary variable
+
 POP   return T_POP;   // pop stack top
 
  /* jump bytecodes */
@@ -139,7 +136,7 @@ ADD return T_ADD;
 SUB return T_SUB;
 MUL return T_MUL;
 DIV return T_DIV;
-MOD return T_MOD;
+
 SL  return T_LSH;
 SR  return T_RSH;
 SRS return T_SHA;
@@ -148,6 +145,7 @@ ROR return T_ROR;
 
 AND return T_AND;
 OR  return T_OR;
+XOR return T_XOR;
 NOT return T_NOT;
 
 LT  return T_LT;
@@ -159,20 +157,20 @@ NEQ return T_NEQ;
 
  /* special instructions */
 TYPE return T_TYPE;
+SIZE return T_SIZE;
 COPY return T_COPY;
 NEW  return T_NEW;
-NEWC return T_NEWC;
 GET  return T_GET;
 SET  return T_SET;
 
  /************************** PRIMARY DATA TYPES *******************************/
 
-{NAME} return T_NAME;
+{NAME}  return T_NAME;
 ({OP})+ return T_NAME; // definable operations
 
-{HEX}      return T_INT;
 
-({DIGIT})+ return T_INT;
+-?0[xX]({HEX})+ read_hex(); return T_INT;
+-?({DIGIT})+    read_dec(); return T_INT;
 
 \"\" return T_STR; // the empty string FIXME
 
@@ -182,12 +180,24 @@ SET  return T_SET;
 
 
  /* This needs to be the last thing */
-<*>.|\n msg_print(NULL, V_ERROR, "unknown token: '%s'\n", yytext);
+<*>.|\n error("unknown token: '%s'\n", yytext);
 
 %%
 
 
+static void read_hex(){
+	int sign = 1;
+	
+	if(yytext[0] == '-') sign = -1;
+	
+	
+}
 
+static void read_dec(){
+	int sign = 1;
+	
+	
+}
 
 //static umax read_num(const char * str) {
 //	umax num=0;

@@ -12,8 +12,9 @@
 
 #include <ppd/string_table.h>
 #include <util/msg.h>
+#include <util/string.h>
 #include <stdlib.h>
-#include <string.h>
+
 
 #define START_SZ 1024 ///< Starting size for the dynamic name array
 

@@ -35,12 +35,12 @@ typedef struct Object{
 	uint8_t   data[]; // the object's data
 } Object;
 
-const umax classFieldCnt = 7;
-const umax classBytes    = classFieldCnt * sizeof(Object_pt);
+//const umax classFieldCnt = 7;
+//const umax classBytes    = 56; // classFieldCnt * sizeof(Object_pt);
 
 
 // insert an arbitrary object into the object memory
-Object_pt insert_object(Object * object);
+Object_pt insertObject(Object * object);
 
 #ifdef __cplusplus
 	}

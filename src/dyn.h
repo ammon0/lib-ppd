@@ -26,7 +26,11 @@ the rest of the scanner.
 
 
 #include <util/types.h>
-#include <stdio.h>
+#include <util/io.h>
+
+#include <ppd/syms.h>
+
+//#include <stdio.h>
 
 
 /******************************************************************************/
@@ -44,7 +48,7 @@ typedef enum{
 	T_NAME,
 	
 	// Declarations
-	T_COLO,
+	//T_COLO,
 	T_OBRC,
 	T_CBRC,
 	T_OTYPE,
@@ -53,6 +57,7 @@ typedef enum{
 	T_CPAR,
 	T_IS,   // declares initial value
 	T_METH, // indicates begining of methods section
+	T_PRIM, // declare a primative response
 	T_TEMP, // declare number of temps, start bytecodes section
 	
 	// Bytecodes
@@ -83,7 +88,7 @@ typedef enum{
 	T_SUB, // 1
 	T_MUL, // 1
 	T_DIV, // 1
-	T_MOD, // 1
+	//T_MOD, // 1
 	T_LSH, // 1
 	T_RSH, // 1
 	T_SHA, // 1
@@ -92,6 +97,7 @@ typedef enum{
 	
 	T_AND, // 1
 	T_OR , // 1
+	T_XOR, // 1
 	T_NOT, // 1
 	T_LT , // 1, return boolean
 	T_GT , // 1, return boolean
@@ -101,9 +107,9 @@ typedef enum{
 	T_NEQ, // 1, return boolean
 	
 	T_TYPE, // 0, return receiver type
+	T_SIZE, // 0, return size in bytes
 	T_COPY, // 0, return receiver copy
 	T_NEW , // 0, return receiver instance
-	T_NEWC, // 1, return receiver instance with x indexed variables
 	T_GET , // 1, return receiver field
 	T_SET , // 2, set receiver field
 	
@@ -128,7 +134,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_STR  ",
 		"T_NAME ",
 		// Declarations
-		"T_COLO ",
+		//"T_COLO ",
 		"T_OBRC ",
 		"T_CBRC ",
 		"T_OTYPE",
@@ -137,6 +143,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_CPAR ",
 		"T_IS   ",
 		"T_METH ",
+		"T_PRIM ",
 		"T_TEMP ",
 		// Bytecodes
 		"T_SEND ",
@@ -148,6 +155,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_PUSHR",
 		"T_PUSHX",
 		"T_POP  ",
+		
 		"T_STT  ",
 		
 		"T_JMP  ",
@@ -161,7 +169,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_SUB  ",
 		"T_MUL  ",
 		"T_DIV  ",
-		"T_MOD  ",
+		//"T_MOD  ",
 		"T_SL   ",
 		"T_SR   ",
 		"T_SRS  ",
@@ -170,6 +178,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		
 		"T_AND  ",
 		"T_OR   ",
+		"T_XOR  ",
 		"T_NOT  ",
 		"T_LT   ",
 		"T_GT   ",
@@ -179,6 +188,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 		"T_NEQ  ",
 		
 		"T_TYPE ",
+		"T_SIZE ",
 		"T_COPY ",
 		"T_NEW  ",
 		"T_NEWC ",
@@ -199,9 +209,10 @@ EXTERN const char * token_dex[NUM_TOKENS]
 
 // Global variables provided by the scanner
 #ifndef _DYN_L
-	extern int    yylineno;
+	extern uint   yylineno;
 	extern char * yytext;
-	extern int    yyleng; ///< the length of yytext
+	extern imax   yyval;  ///< numeric value
+	extern size_t yyleng; ///< the length of yytext
 	extern FILE * yyin;
 	
 	void yyrestart( FILE *new_file );
@@ -216,7 +227,7 @@ EXTERN const char * token_dex[NUM_TOKENS]
 #define YY_DECL token_t yylex(void)
 token_t yylex(void);
 
-void objectParser(void);
+return_t dynParser(DS symbol_table);
 
 #ifdef __cplusplus
 	}

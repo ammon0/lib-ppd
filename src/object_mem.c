@@ -12,7 +12,7 @@
 
 #include <ppd/object_mem.h>
 //#include <ppd/objects.h>
-#include <util/msg.h>
+#include <ppd/debug.h>
 #include <stdlib.h>
 
 
@@ -196,6 +196,24 @@ static inline Object_pt allocate(umax size){
 	}
 	
 	object->size = size;
+	
+	return (Object_pt)entry;
+}
+
+
+/******************************************************************************/
+//                            PUBLIC INTERFACE
+/******************************************************************************/
+
+
+Object_pt insertObject(Object * object){
+	Object_table_entry * entry;
+	
+	entry = getFromFreeList(object);
+	if(entry == NULL){
+		error("insertObject(): object table full or uninitialized.\n");
+		return NIL;
+	}
 	
 	return (Object_pt)entry;
 }

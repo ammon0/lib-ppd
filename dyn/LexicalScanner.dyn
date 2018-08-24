@@ -1,0 +1,50 @@
+
+
+Class:LexicalScanner{
+	(Class) superClass IS Object
+	(Dictionary)methodDictionary
+	instanceSpec # integer with bitfields
+	# pointers or integers :1
+	# integer width :2?
+	# indexable fields present :1
+	# number of fixed fields : remainder
+	(Set(Class)) subClasses IS nil
+	
+	# text: the currently matched text
+	# length: the length of the currently matched text
+	# in: the input stream/file
+	# out: the output stream/file
+	# state: the current start condition
+	
+	(Array) instanceVariables IS {"text length in out state"}
+	
+	(String) name IS "LexicalScanner"
+	(String) comment IS "A lexical scanner"
+	
+METHODS
+	
+	addRule((String)pattern block){}
+	
+	addVar((String) name){}
+	
+	readFile((File) definitionFile){}
+	
+	# match the next rule
+	lex(){}
+	
+	setIn(inFile){}
+	setOut(outFile){}
+	
+	######################## ACCESSORS
+	
+	# return the currently matched text
+	(String) getText(){}
+	
+	# return the length of the currently matched text
+	getLength(){}
+	
+	getIn(){}
+	
+}
+
+

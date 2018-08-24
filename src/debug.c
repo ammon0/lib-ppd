@@ -14,49 +14,51 @@
 
 #include <ppd/debug.h>
 
+#include <util/string.h>
+#include <util/io.h>
+
 #include <time.h>
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 
-
+#define FILE_NAME_SZ 128
+#define DIGITS_SZ 16
 
 
 void openLog(void){
 	time_t    now;
 	struct tm local_time;
-	char      digits[16];
-	char      logFileName[128] = "log/";
+	char      digits[DIGITS_SZ];
+	char      logFileName[FILE_NAME_SZ] = "log/";
 	
 	
 	now = time(NULL);
 	local_time = *(localtime(&now));
 	
-	sprintf(digits,"%u",(local_time.tm_year+1900));
-	strcat(logFileName,digits);
-	strcat(logFileName,"_");
+	snprintf(digits, DIGITS_SZ,"%u",(local_time.tm_year+1900));
+	strlcat(logFileName,digits, FILE_NAME_SZ);
+	strlcat(logFileName,"_", FILE_NAME_SZ);
 	
-	sprintf(digits,"%u",(local_time.tm_mon+1));
-	strcat(logFileName,digits);
-	strcat(logFileName,"_");
+	snprintf(digits, DIGITS_SZ,"%u",(local_time.tm_mon+1));
+	strlcat(logFileName,digits, FILE_NAME_SZ);
+	strlcat(logFileName,"_", FILE_NAME_SZ);
 	
-	sprintf(digits,"%u",local_time.tm_mday);
-	strcat(logFileName,digits);
-	strcat(logFileName,"_");
+	snprintf(digits, DIGITS_SZ,"%u",local_time.tm_mday);
+	strlcat(logFileName,digits, FILE_NAME_SZ);
+	strlcat(logFileName,"_", FILE_NAME_SZ);
 	
-	sprintf(digits,"%u",local_time.tm_hour);
-	strcat(logFileName,digits);
-	strcat(logFileName,"_");
+	snprintf(digits, DIGITS_SZ,"%u",local_time.tm_hour);
+	strlcat(logFileName,digits, FILE_NAME_SZ);
+	strlcat(logFileName,"_", FILE_NAME_SZ);
 
-	sprintf(digits,"%u",local_time.tm_min);
-	strcat(logFileName,digits);
-	strcat(logFileName,"_");
+	snprintf(digits, DIGITS_SZ,"%u",local_time.tm_min);
+	strlcat(logFileName,digits, FILE_NAME_SZ);
+	strlcat(logFileName,"_", FILE_NAME_SZ);
 
-	sprintf(digits,"%u",local_time.tm_sec);
-	strcat(logFileName,digits);
+	snprintf(digits, DIGITS_SZ,"%u",local_time.tm_sec);
+	strlcat(logFileName,digits, FILE_NAME_SZ);
 
-	strcat(logFileName,".log");
+	strlcat(logFileName,".log", FILE_NAME_SZ);
 	
 	
 	if(msg_log_open(logfile, lm_replace, logFileName) == r_failure){

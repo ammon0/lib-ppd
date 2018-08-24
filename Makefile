@@ -83,7 +83,7 @@ omem_o := object_mem.o
 parse_o:= dynParser.o
 syms_o := syms.o
 debug_o:= debug.o
-c_o    := debug.o #object_mem.o dynParser.o syms.o
+c_o    :=
 cpp_o  := gen-pexe.o load.o
 
 tests:=testMemory testScanner testParser testSyms
@@ -101,6 +101,8 @@ cpp_o  :=$(addprefix $(WORKDIR)/, $(cpp_o))
 
 c_o += $(omem_o) $(parse_o) $(syms_o) $(debug_o)
 
+dyn_o:= $(flex_o) $(parse_o) $(syms_o)
+
 
 ################################### TARGETS ####################################
 
@@ -110,20 +112,22 @@ c_o += $(omem_o) $(parse_o) $(syms_o) $(debug_o)
 debug: CFLAGS += -DDEBUG -O0
 debug: $(tests) $(c_o) $(cpp_o)
 
+lib: CLFAGS += -DNDEBUG -O3
+
 
 ################################# PRODUCTIONS ##################################
 
 
-testMemory: $(srcdir)/testMemory.c $(omem_o)
-	$(CC) $(CFLAGS) -o $@ $<  $(omem_o) -lmsg
+testMemory: $(srcdir)/testMemory.c $(omem_o) $(debug_o)
+	$(CC) $(CFLAGS) -o $@ $<  $(omem_o) $(debug_o) -lmsg
 	chmod +x $@
 
-testScanner: $(srcdir)/testScanner.c $(flex_o)
-	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_o)
+testScanner: $(srcdir)/testScanner.c $(flex_o) $(debug_o)
+	$(CC) $(CFLAGS) -o $@ $< -lmsg $(flex_o) $(debug_o)
 	chmod +x $@
 
-testParser:$(srcdir)/testParser.c $(flex_o) $(parse_o) $(debug_o)
-	$(CC) $(CFLAGS) -o $@ $< $(parse_o) $(flex_o) $(debug_o) -ldata -lmsg
+testParser:$(srcdir)/testParser.c $(dyn_o) $(debug_o) $(omem_o)
+	$(CC) $(CFLAGS) -o $@ $< $(dyn_o) $(debug_o) $(omem_o) -ldata -lmsg
 	chmod +x $@
 
 testSyms: $(srcdir)/testSyms.c $(syms_o)

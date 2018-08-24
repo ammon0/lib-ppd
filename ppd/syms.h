@@ -60,7 +60,7 @@ const symbol_record * sym_fixup(DS table);
 
 char * sym_next(DS table);
 
-void sym_print(symbol_record *rec);
+void sym_print(const symbol_record *rec);
 
 
 #ifdef __cplusplus
